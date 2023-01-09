@@ -1,0 +1,57 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch CSVCredUtil",
+            "request": "launch",
+            "mainClass": "utils.CSVCredUtil",
+            "projectName": "mailtraffic_95ac9838"
+        },
+        {
+            "type": "java",
+            "name": "Launch SeqCredHandler",
+            "request": "launch",
+            "mainClass": "utils.SeqCredHandler",
+            "projectName": "mailtraffic_95ac9838"
+        },
+        {
+            "type": "java",
+            "name": "Launch GetStatus",
+            "request": "launch",
+            "mainClass": "api.GetStatus",
+            "projectName": "mailtraffic_95ac9838"
+        },
+        {
+            "type": "java",
+            "name": "Launch CredUtils",
+            "request": "launch",
+            "mainClass": "utils.CredUtils",
+            "projectName": "mailtraffic_95ac9838"
+        },
+        {
+            "type": "java",
+            "name": "Launch MailTrafficGenerator",
+            "request": "launch",
+            "mainClass": "controller.MailTrafficGenerator",
+            "projectName": "mailtraffic_95ac9838"
+        },
+        {
+            "name": "Attach to Chrome",
+            "port": 9222,
+            "request": "attach",
+            "type": "chrome",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "PowerShell: Launch Current File",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "${file}",
+            "args": []
+        }
+    ]
+}
