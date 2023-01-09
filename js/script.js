@@ -3,6 +3,14 @@ function generateTraffic(event){
     let datasource = document.getElementById('datasource').value;
     let formData = new FormData();
     formData.append('datasource',datasource);
+    let count = document.getElementById('count').value;
+    formData.append('count',count);
+    if(
+        !count
+    ){
+        alert('Please Enter the number of Mails...');
+        return;
+    }
     if(datasource=='csv'){
         let file = document.getElementById('file');
         if(
@@ -29,8 +37,6 @@ function generateTraffic(event){
         let tenant = document.getElementById('tenantid').value;
         formData.append("tenant",tenant)
     }
-    let count = document.getElementById('count').value;
-    formData.append('count',count);
     $.ajax({
         type: "POST",
         enctype: 'multipart/form-data',
@@ -76,3 +82,23 @@ function changeOpt(){
     }
 }
 
+function changeTenant(){
+    const tenantid = document.getElementById('tenantid').value;
+    const senders = document.getElementById('senders');
+    const reciever = document.getElementById('recievers');
+    if(
+        !tenantid
+    ){
+        senders.classList.add('hidden');
+        reciever.classList.add('hidden');
+        return;
+    }
+    const param = new URLSearchParams({tenantid});
+    $.get('/mailtraffic/api/getinfo?'+param.toString())
+    .then(json=>{
+        senders.classList.remove('hidden');
+        reciever.classList.remove('hidden');
+        senders.textContent="Senders: "+json.sender;
+        reciever.textContent="Recievers: "+json.reciever;
+    }).catch(err=>console.log("Not able to retrieve info..."));    
+}

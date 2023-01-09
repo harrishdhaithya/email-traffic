@@ -67,12 +67,14 @@
                 </div>
                 <div id="db-opt" class="hidden">
                     <label for="tenantid" class="form-label">Tenant: </label>
-                    <select name="tenantid" id="tenantid" class="form-input">
+                    <select name="tenantid" id="tenantid" class="form-input" onchange="changeTenant()">
                         <option value="" selected>Select</option>
                         <%for(Tenant t: tenants){%>
                             <option value=<%=t.getId()%>><%=t.getName()%></option>
                         <%}%>
                     </select>
+                    <div id="senders"></div>
+                    <div id="recievers"></div>
                 </div>
                 <div id="common" class="hidden">
                     <label for="count" class="form-label">Enter Number of Mails to be sent:</label>

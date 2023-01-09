@@ -29,7 +29,7 @@
         
         <div class="container">
             <div class="header-box">
-                Thread Pool Configuration
+                Threadpool Configuration
             </div>
             <form onsubmit="updatePoolSize(event)">
                 <label for="poolsize" class="form-label">Thread Pool Size</label>

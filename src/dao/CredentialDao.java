@@ -72,11 +72,12 @@ public class CredentialDao {
             jobj = new JSONObject();
             DataObject dobj1 = DataAccess.get("Credentials",c1.and(tenant));
             DataObject dobj2 = DataAccess.get("Credentials", c2.and(tenant));
-            jobj.put("senders", dobj1.size("Credentials"));
-            jobj.put("reciever", dobj2.size("Credentials"));
+            int size1 = dobj1.size("Credentials");
+            int size2 = dobj2.size("Credentials");
+            jobj.put("sender", (size1==-1)?0:size1);
+            jobj.put("reciever", (size2==-1)?0:size2);
             return jobj;
         } catch (DataAccessException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;
