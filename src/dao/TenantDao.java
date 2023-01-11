@@ -14,10 +14,17 @@ import com.adventnet.persistence.WritableDataObject;
 import model.Tenant;
 
 public class TenantDao {
+    private static TenantDao tdao = null;
+    public static TenantDao getInstance(){
+        if(tdao==null){
+            tdao = new TenantDao();
+        }
+        return tdao;
+    }
     public boolean addTenant(Tenant t){
         DataObject dobj = new WritableDataObject();
         Row row = new Row("Tenant");
-        row.set("TENANT_NAME", t.getName());
+        row.set("TENANT_NAME", t.getName().toLowerCase());
         try {
             dobj.addRow(row);
             DataAccess.add(dobj);

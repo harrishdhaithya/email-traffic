@@ -22,7 +22,6 @@ import microsoft.exchange.webservices.data.credential.WebCredentials;
 import microsoft.exchange.webservices.data.property.complex.MessageBody;
 import model.Config;
 import model.Mail;
-import singleton.Singleton;
 import utils.CSVCredUtil;
 import utils.DBCredUtil;
 import utils.ICredUtil;
@@ -50,7 +49,7 @@ public class MailTrafficGenerator {
     private long endTime;
     Logger logger = Logger.getLogger(this.getClass().getName());
     public MailTrafficGenerator(int count,String filepath){
-        ConfigDao cdao = Singleton.getConfigDao();
+        ConfigDao cdao = ConfigDao.getInstance();
         Config c = cdao.getConfig("poolsize");
         this.count=count;
         this.countMail=count;
@@ -61,7 +60,7 @@ public class MailTrafficGenerator {
         this.es = Executors.newFixedThreadPool(poolSize);
     }
     public MailTrafficGenerator(int count,String tenant, int seqStart,int seqEnd, String prefix,String suffix,String password){
-        ConfigDao cdao = Singleton.getConfigDao();
+        ConfigDao cdao = ConfigDao.getInstance();
         Config c = cdao.getConfig("poolsize");
         this.count=count;
         this.countMail=count;
@@ -77,7 +76,7 @@ public class MailTrafficGenerator {
         this.es = Executors.newFixedThreadPool(poolSize);
     }
     public MailTrafficGenerator(long tenant_id,int count){
-        ConfigDao cdao = Singleton.getConfigDao();
+        ConfigDao cdao = ConfigDao.getInstance();
         Config c = cdao.getConfig("poolsize");
         this.poolSize = (c!=null)?Integer.parseInt(c.getPropValue()):25;
         this.tenant_id = tenant_id;

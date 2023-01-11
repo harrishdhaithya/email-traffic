@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 import dao.ConfigDao;
 import model.Config;
-import singleton.Singleton;
 
 public class UpdateThreadPool extends HttpServlet {
     Logger logger = Logger.getLogger(this.getClass().getName());
@@ -33,7 +32,7 @@ public class UpdateThreadPool extends HttpServlet {
             if(!isNumeric(threadpool)){
                 throw new Exception("Enter a numeric value for Thread Pool Size...");
             }
-            ConfigDao cdao = Singleton.getConfigDao();
+            ConfigDao cdao = ConfigDao.getInstance();
             Config conf = new Config("poolsize", threadpool);
             boolean success = cdao.updateConfig(conf);
             if(!success){

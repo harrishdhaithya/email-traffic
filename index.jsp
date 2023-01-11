@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html"%>
-<%@ page import="model.Tenant,dao.TenantDao,singleton.Singleton,java.util.List, controller.MailTrafficGenerator"%>
+<%@ page import="model.Tenant,dao.TenantDao,java.util.List, controller.MailTrafficGenerator"%>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -30,7 +30,7 @@
         </div>
     </div>
     <%
-        TenantDao tdao = Singleton.getTenantDao();
+        TenantDao tdao = TenantDao.getInstance();
         List<Tenant> tenants = tdao.getAllTenants();
     %>
     <div class="container">

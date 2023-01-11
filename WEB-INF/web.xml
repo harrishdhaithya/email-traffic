@@ -54,4 +54,12 @@
         <servlet-name>getinfo</servlet-name>
         <url-pattern>/api/getinfo</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>schedule</servlet-name>
+        <servlet-class>api.CreateSchedule</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>schedule</servlet-name>
+        <url-pattern>/api/schedule</url-pattern>
+    </servlet-mapping>
 </web-app>

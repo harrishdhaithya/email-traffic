@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch ScheduleDao",
+            "request": "launch",
+            "mainClass": "dao.ScheduleDao",
+            "projectName": "mailtraffic_95ac9838"
+        },
+        {
+            "type": "java",
             "name": "Launch CSVCredUtil",
             "request": "launch",
             "mainClass": "utils.CSVCredUtil",

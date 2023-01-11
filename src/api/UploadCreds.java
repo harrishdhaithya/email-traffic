@@ -14,7 +14,6 @@ import javax.servlet.http.Part;
 import org.json.JSONObject;
 import dao.CredentialDao;
 import model.Credential;
-import singleton.Singleton;
 
 @MultipartConfig
 public class UploadCreds extends HttpServlet {
@@ -53,7 +52,7 @@ public class UploadCreds extends HttpServlet {
        try{
             out = resp.getWriter();
             String tenantId = req.getParameter("tenantid");
-            CredentialDao cdao = Singleton.getCredentialDao();
+            CredentialDao cdao = CredentialDao.getInstance();
             Part p = req.getPart("file");
             if(
                 p==null 

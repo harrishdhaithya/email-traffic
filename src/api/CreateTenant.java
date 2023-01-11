@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 import dao.TenantDao;
 import model.Tenant;
-import singleton.Singleton;
 
 public class CreateTenant extends HttpServlet {
     Logger logger = Logger.getLogger(this.getClass().getName());
@@ -24,7 +23,7 @@ public class CreateTenant extends HttpServlet {
                 throw new Exception("Enter Tenant Name");
             }
             Tenant t = new Tenant(tenant);
-            TenantDao tdao = Singleton.getTenantDao();
+            TenantDao tdao = TenantDao.getInstance();
             boolean success = tdao.addTenant(t);
             if(!success){
                 throw new Exception("Not able to add tenant");

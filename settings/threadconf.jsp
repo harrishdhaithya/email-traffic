@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html"%>
-<%@ page import="model.Config,dao.ConfigDao,singleton.Singleton"%>
+<%@ page import="model.Config,dao.ConfigDao"%>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 </head>
 <body>
     <%
-        ConfigDao cdao = Singleton.getConfigDao();
+        ConfigDao cdao = ConfigDao.getInstance();
         Config conf = cdao.getConfig("poolsize");
     %>
     <div class="nav-bar flex" style="align-items: center;">

@@ -11,7 +11,6 @@ import javax.servlet.http.Part;
 import org.json.JSONObject;
 import controller.MailTrafficGenerator;
 import dao.CredentialDao;
-import singleton.Singleton;
 
 
 @MultipartConfig
@@ -73,7 +72,7 @@ public class CreateTraffic extends HttpServlet {
                 if(tenant_id==null||tenant_id==""){
                     throw new Exception("Please select Tenant...");
                 }
-                CredentialDao cdao = Singleton.getCredentialDao();
+                CredentialDao cdao = CredentialDao.getInstance();
                 JSONObject teninfo = cdao.getSenderAndRecCount(Long.parseLong(tenant_id));
                 int senders = teninfo.getInt("sender");
                 int recievers = teninfo.getInt("reciever");

@@ -1,6 +1,12 @@
 function createTenant(event) {
     event.preventDefault();
     const tenant = document.getElementById('tenant').value;
+    if(
+        !tenant || tenant.trim()==''
+    ){
+        alert('Please enter name of the tenant');
+        return;
+    }
     const param = new URLSearchParams({tenant});
     $.get('/mailtraffic/api/addtenant?'+param.toString())
     .then(resp=>{

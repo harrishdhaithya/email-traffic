@@ -23,6 +23,13 @@ import com.adventnet.persistence.WritableDataObject;
 import model.Credential;
 
 public class CredentialDao {
+    private static CredentialDao cdao = null;
+    public static CredentialDao getInstance(){
+        if(cdao==null){
+            cdao = new CredentialDao();
+        }
+        return cdao;
+    }
     public boolean addCredentials(List<Credential> credentials){
         DataObject dobj = new WritableDataObject();
         try {

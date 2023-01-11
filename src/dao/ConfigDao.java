@@ -14,6 +14,13 @@ import com.adventnet.persistence.WritableDataObject;
 import model.Config;
 
 public class ConfigDao {
+    private static ConfigDao cdao = null;
+    public static ConfigDao getInstance(){
+        if(cdao==null){
+            cdao = new ConfigDao();
+        }
+        return cdao;
+    }
     public boolean addConfig(Config c){
         DataObject dobj = new WritableDataObject();
         Row row = new Row("App_Configuration");

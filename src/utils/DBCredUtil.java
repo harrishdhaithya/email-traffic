@@ -3,7 +3,6 @@ import dao.CredentialDao;
 import microsoft.exchange.webservices.data.credential.ExchangeCredentials;
 import microsoft.exchange.webservices.data.credential.WebCredentials;
 import model.Credential;
-import singleton.Singleton;
 
 public class DBCredUtil implements ICredUtil {
     private long tenant_id;
@@ -12,7 +11,7 @@ public class DBCredUtil implements ICredUtil {
     }
     @Override
     public ExchangeCredentials getRandomCredPair() {
-        CredentialDao cdao = Singleton.getCredentialDao();
+        CredentialDao cdao = CredentialDao.getInstance();
         Credential c = cdao.getRandomCredential(tenant_id);
         if(c==null){
             return null;
@@ -21,7 +20,7 @@ public class DBCredUtil implements ICredUtil {
     }
     @Override
     public String getRandomReciever() {
-        CredentialDao cdao = Singleton.getCredentialDao();
+        CredentialDao cdao = CredentialDao.getInstance();
         String s = cdao.getRandomReciever(tenant_id);
         return s;
     }

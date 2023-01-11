@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html"%>
-<%@ page import="model.Tenant,dao.TenantDao,singleton.Singleton,java.util.List"%>
+<%@ page import="model.Tenant,dao.TenantDao,java.util.List"%>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -13,7 +13,7 @@
 </head>
 <body>
     <%
-        TenantDao tdao = Singleton.getTenantDao();
+        TenantDao tdao = TenantDao.getInstance();
         List<Tenant> tenants = tdao.getAllTenants();
     %>
     <div class="nav-bar flex" style="align-items: center;">

@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import dao.CredentialDao;
-import singleton.Singleton;
 
 public class GetTenInfo extends HttpServlet {
     Logger logger = Logger.getLogger(this.getClass().getName());
@@ -19,7 +18,7 @@ public class GetTenInfo extends HttpServlet {
             if(tenant==null){
                 throw new Exception("No tenant id found");
             }
-            CredentialDao cdao = Singleton.getCredentialDao();
+            CredentialDao cdao = CredentialDao.getInstance();
             resp.setStatus(200);
             resp.setContentType("application/json");
             out.println(cdao.getSenderAndRecCount(Long.parseLong(tenant)));
