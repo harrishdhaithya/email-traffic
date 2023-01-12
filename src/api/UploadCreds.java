@@ -80,13 +80,9 @@ public class UploadCreds extends HttpServlet {
                 throw new Exception("Something went wrong...");
             }
        }catch(Exception ex){
-            JSONObject jobj = new JSONObject();
-            // ex.printStackTrace();
             logger.warning(ex.toString());
-            jobj.put("error", ex.getMessage());
             resp.setStatus(400);
-            resp.setContentType("application/json");
-            out.println(jobj.toString());
+            out.println(ex.getMessage());
        }
     }
 }

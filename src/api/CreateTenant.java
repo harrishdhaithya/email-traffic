@@ -35,9 +35,9 @@ public class CreateTenant extends HttpServlet {
         }catch(Exception ex){
             logger.warning(ex.toString());
             resp.setStatus(400);
-            resp.setContentType("application/json");
-            jobj.put("error", ex.getMessage());
-            out.println(jobj.toString());
+            // resp.setContentType("application/json");
+            // jobj.put("error", ex.getMessage());
+            out.println(ex.getMessage());
         }
     }
 }

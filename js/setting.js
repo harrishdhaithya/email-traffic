@@ -13,7 +13,7 @@ function updatePoolSize(event) {
         alert(resp.message);
     })
     .catch(err=>{
-        const error = JSON.parse(error.resposeText);
-        alert(error.error);
+        // const error = JSON.parse(error.resposeText);
+        alert(err.resposeText);
     });
 }

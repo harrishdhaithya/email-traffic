@@ -14,7 +14,7 @@ public class MailTrafficTask implements Task {
         long scheduleId = task.getScheduleID();
         ScheduleDao sdao = ScheduleDao.getInstance();
         TaskSchedule ts = sdao.getScheduleById(scheduleId);
-        MailTrafficGenerator mtg = new MailTrafficGenerator(ts.getCount(), (int)ts.getTenantid());
+        MailTrafficGenerator mtg = new MailTrafficGenerator(ts.getTenantid(), (int)ts.getCount());
         try {
             mtg.generateTraffic();
         } catch (CredentialException e) {

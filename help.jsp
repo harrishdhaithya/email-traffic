@@ -80,7 +80,9 @@
                     2) Tenant Configuration: <br>
                     This setting is used to add tenant for uploading credentials in the database. <br>
                     3) Threadpool Configuration: <br>
-                    This setting is used to configure concurrency limit to send emails.
+                    This setting is used to configure concurrency limit to send emails. <br>
+                    4) Schedule Mail Traffic: <br>
+                    This setting allows to automatically schedule email traffic on daily basis.
                 </div>
             </div>
         </div>

@@ -44,10 +44,10 @@ public class UpdateThreadPool extends HttpServlet {
             out.println(jobj.toString());
         }catch(Exception ex){
             resp.setStatus(400);
-            resp.setContentType("application/json");
+            // resp.setContentType("application/json");
             logger.warning(ex.toString());
-            jobj.put("error", ex.getMessage());
-            out.println(jobj.toString());
+            // jobj.put("error", ex.getMessage());
+            out.println(ex.getMessage());
         }
     }
 }

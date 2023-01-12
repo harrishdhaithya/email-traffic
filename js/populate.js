@@ -25,7 +25,7 @@ function uploadData(event) {
         alert('Data uploaded successfully...');
         location.reload();
     }).catch(err=>{
-        const json = JSON.parse(err.responseText);
-        alert(json.error);
+        // const json = JSON.parse(err.responseText);
+        alert(err.responseText);
     });
 }

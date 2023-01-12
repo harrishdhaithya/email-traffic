@@ -96,8 +96,8 @@ public class CreateTraffic extends HttpServlet {
             // servex.printStackTrace();
             logger.warning(servex.getStackTrace().toString());
             resp.setStatus(400);
-            jobj.put("error", servex.getMessage());
-            out.println(jobj.toString());
+            // jobj.put("error", servex.getMessage());
+            out.println(servex.getMessage());
             return;
         }
     }

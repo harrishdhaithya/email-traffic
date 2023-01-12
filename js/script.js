@@ -48,8 +48,7 @@ function generateTraffic(event){
     }).then(resp=>{
         location.href='mailstatus.html';
     }).catch(err=>{
-        const json = JSON.parse(err.responseText);
-        alert(json.error);
+        alert(err.responseText);
     });
 }
 
