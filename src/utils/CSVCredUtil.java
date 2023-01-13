@@ -21,7 +21,8 @@ public class CSVCredUtil implements ICredUtil {
             BufferedReader reader = new BufferedReader(new FileReader(this.filepath));
             String line = "";
             StringBuilder content = new StringBuilder();
-            String header = reader.readLine();
+            //header 
+            reader.readLine();
             while ((line = reader.readLine())!=null) {
                 content.append(line+"\n");
             }

@@ -3,7 +3,6 @@ package api;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +19,6 @@ public class CreateSchedule extends HttpServlet {
         String enddate = req.getParameter("enddate");
         String count = req.getParameter("count");
         String tenant_id = req.getParameter("tenantid");
-        String frequency = req.getParameter("frequency");
         PrintWriter out = null;
         ScheduleDao sdao = ScheduleDao.getInstance();
         try {
