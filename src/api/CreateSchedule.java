@@ -1,9 +1,8 @@
 package api;
 
 import java.io.PrintWriter;
-import java.sql.Timestamp;
 import java.text.ParseException;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,10 +12,8 @@ import dao.ScheduleDao;
 public class CreateSchedule extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp){
-        String taskname = req.getParameter("taskname");
         String schedulename = req.getParameter("schedulename");
-        String startdate = req.getParameter("startdate");
-        String enddate = req.getParameter("enddate");
+        String time = req.getParameter("time");
         String count = req.getParameter("count");
         String tenant_id = req.getParameter("tenantid");
         PrintWriter out = null;
@@ -24,20 +21,15 @@ public class CreateSchedule extends HttpServlet {
         try {
             out = resp.getWriter();
             if(
-                taskname == null ||
                 schedulename == null ||
-                enddate == null ||
-                startdate == null ||
+                time==null ||
                 count == null ||
                 tenant_id == null
             ){
                 throw new Exception("Fill all the required fields...");
             }
-            LocalDateTime startDateTS = LocalDateTime.parse(startdate);
-            LocalDateTime endDateTS = LocalDateTime.parse(enddate);
-            Timestamp start = Timestamp.valueOf(startDateTS);
-            Timestamp end = Timestamp.valueOf(endDateTS);
-            boolean success = sdao.sheduleMailTask(taskname, schedulename, start, end, Integer.parseInt(tenant_id), Integer.parseInt(count));
+            LocalTime lt = LocalTime.parse(time);
+            boolean success = sdao.sheduleMailTask(schedulename, Integer.parseInt(tenant_id), Integer.parseInt(count),lt);
             if(!success){
                 throw new Exception("Not able to schedule task...");
             }

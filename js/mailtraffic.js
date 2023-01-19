@@ -1,15 +1,11 @@
 function generateTraffic(event) {
     event.preventDefault();
-    const startdate = document.getElementById('startdate').value;
-    const enddate = document.getElementById('enddate').value;
-    const taskname = document.getElementById('taskname').value;
+    const time = document.getElementById('time').value;
     const schedulename = document.getElementById('schedulename').value;
     const tenantid = document.getElementById('tenant').value;
     const count = document.getElementById('count').value;
     if(
-        !startdate ||
-        !enddate ||
-        !taskname ||
+        !time ||
         !schedulename ||
         !tenant ||
         !count
@@ -17,7 +13,7 @@ function generateTraffic(event) {
         alert('All the fields are required...');
         return;
     }
-    const param = new URLSearchParams({startdate,enddate,taskname,schedulename,tenantid,count})
+    const param = new URLSearchParams({time,schedulename,tenantid,count})
     $.get('/mailtraffic/api/schedule?'+param.toString())
     .then(resp=>{
         alert('Email Traffic Sheduled Successfully...')

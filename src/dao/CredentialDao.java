@@ -5,17 +5,12 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.json.JSONObject;
-
 import com.adventnet.db.api.RelationalAPI;
 import com.adventnet.ds.query.Column;
 import com.adventnet.ds.query.Criteria;
 import com.adventnet.ds.query.DataSet;
 import com.adventnet.ds.query.QueryConstants;
-import com.adventnet.ds.query.SelectQuery;
-import com.adventnet.ds.query.SelectQueryImpl;
-import com.adventnet.ds.query.Table;
 import com.adventnet.mfw.bean.BeanUtil;
 import com.adventnet.persistence.DataAccess;
 import com.adventnet.persistence.DataAccessException;
@@ -61,7 +56,7 @@ public class CredentialDao {
             Iterator<?> itr = dobj.getRows("Credentials");
             while(itr.hasNext()){
                 Row row = (Row)itr.next();
-                long id = row.getInt("ID");
+                long id = row.getLong("ID");
                 String email = row.getString("EMAIL");
                 String password = row.getString("PASSWORD");
                 Credential cred = new Credential(id, email, password, id);
@@ -102,8 +97,8 @@ public class CredentialDao {
             ds=relApi.executeQuery(conn, "select * from credentials c where tenant_id="+tenantid+" and password IS NOT NULL order by random() limit 1");
             if(ds.next()){
                 long id = ds.getAsLong("ID");
-                String email = ds.getAsString("EMAIL");
-                String password = ds.getAsString("PASSWORD");
+                String email = ds.getAsString("EMAIL").trim();
+                String password = ds.getAsString("PASSWORD").trim();
                 long tenantId = ds.getAsLong("TENANT_ID");
                 c = new Credential(id,email, password, tenantId);
                 conn.close();
@@ -129,5 +124,37 @@ public class CredentialDao {
             e.printStackTrace();
         }
         return null;
+    }
+    public String[] getNReandomEmails(long tenantid,int n){
+        String[] emails = new String[n];
+        RelationalAPI relApi = RelationalAPI.getInstance();
+        Connection conn = null;
+        DataSet ds = null;
+        int i=0;
+        try{
+            conn = relApi.getConnection();
+            ds = relApi.executeQuery(conn, "select EMAIL from credentials where tenant_id="+tenantid+" and password IS NOT NULL order by random() limit "+n);
+            while(ds.next()){
+                String email = ds.getAsString("EMAIL");
+                emails[i++] = email;
+            }
+            if(i==0){
+                return null;
+            }
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
+        return emails;
+    }
+    public String[] deleteNRandomEmail(long tenantid,int n){
+        String[] emails = getNReandomEmails(tenantid,n);
+        Criteria c = new Criteria(new Column("Credentials", "EMAIL"), emails, QueryConstants.IN);
+        try {
+            DataAccess.delete("Credentials", c);
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return emails;
     }
 }

@@ -47,6 +47,14 @@
         <url-pattern>/api/addtenant</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>deletetenant</servlet-name>
+        <servlet-class>api.DeleteTenant</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>deletetenant</servlet-name>
+        <url-pattern>/api/deletetenant</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>getinfo</servlet-name>
         <servlet-class>api.GetTenInfo</servlet-class>
     </servlet>
@@ -61,5 +69,29 @@
     <servlet-mapping>
         <servlet-name>schedule</servlet-name>
         <url-pattern>/api/schedule</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>disablesch</servlet-name>
+        <servlet-class>api.DisableSchedule</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>disablesch</servlet-name>
+        <url-pattern>/api/schedule/disable</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>enablesch</servlet-name>
+        <servlet-class>api.EnableSchedule</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>enablesch</servlet-name>
+        <url-pattern>/api/schedule/enable</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>test</servlet-name>
+        <servlet-class>api.Test</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>test</servlet-name>
+        <url-pattern>/api/test</url-pattern>
     </servlet-mapping>
 </web-app>

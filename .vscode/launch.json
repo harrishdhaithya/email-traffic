@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch UserPass",
+            "request": "launch",
+            "mainClass": "UserPass",
+            "projectName": "mailtraffic_95ac9838"
+        },
+        {
+            "type": "java",
+            "name": "Launch Test",
+            "request": "launch",
+            "mainClass": "Test",
+            "projectName": "mailtraffic_95ac9838"
+        },
+        {
+            "type": "java",
             "name": "Launch ScheduleDao",
             "request": "launch",
             "mainClass": "dao.ScheduleDao",

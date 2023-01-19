@@ -67,4 +67,14 @@ public class TenantDao {
         }
         return tenants;
     }
+    public boolean deleteTenant(long id){
+        Criteria c = new Criteria(new Column("Tenant", "ID"), id, QueryConstants.EQUAL);
+        try {
+            DataAccess.delete("Tenant", c);
+            return true;
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

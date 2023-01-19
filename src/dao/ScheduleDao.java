@@ -1,12 +1,25 @@
 package dao;
 
-import java.sql.Timestamp;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.time.LocalTime;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
+
+import com.adventnet.db.api.RelationalAPI;
 import com.adventnet.ds.query.Column;
 import com.adventnet.ds.query.Criteria;
+import com.adventnet.ds.query.DataSet;
+import com.adventnet.ds.query.Join;
 import com.adventnet.ds.query.QueryConstants;
+import com.adventnet.ds.query.QueryConstructionException;
+import com.adventnet.ds.query.SelectQuery;
+import com.adventnet.ds.query.SelectQueryImpl;
+import com.adventnet.ds.query.Table;
 import com.adventnet.mfw.bean.BeanUtil;
 import com.adventnet.persistence.DataAccess;
 import com.adventnet.persistence.DataAccessException;
@@ -20,6 +33,8 @@ import com.adventnet.taskengine.Scheduler;
 import com.adventnet.taskengine.TASKENGINE_TASK;
 import com.adventnet.taskengine.TASK_INPUT;
 import com.adventnet.taskengine.util.CalendarRowConfig;
+
+import model.Schedule;
 import model.TaskSchedule;
 
 public class ScheduleDao {
@@ -49,13 +64,13 @@ public class ScheduleDao {
         }
         return ts;
     }
-    public boolean sheduleMailTask(String taskname, String schedulename,Timestamp startDate, Timestamp endDate,int tenant_id,int count)
+    public boolean sheduleMailTask(String schedulename,int tenant_id,int count,LocalTime localTime)
     {
         try {
             Persistence pers = (Persistence) BeanUtil.lookup("Persistence");
             DataObject data = pers.constructDataObject();
             Row taskengineRow = new Row(TASKENGINE_TASK.TABLE);
-            taskengineRow.set(TASKENGINE_TASK.TASK_NAME_IDX,taskname);
+            taskengineRow.set(TASKENGINE_TASK.TASK_NAME_IDX,schedulename);
             taskengineRow.set(TASKENGINE_TASK.CLASS_NAME_IDX,"task.MailTrafficTask");
             Row scheduleRow = new Row(SCHEDULE.TABLE);
             scheduleRow.set(SCHEDULE.SCHEDULE_NAME_IDX,schedulename);
@@ -63,16 +78,16 @@ public class ScheduleDao {
             scheduledTaskRow.set(SCHEDULED_TASK.SCHEDULE_ID_IDX,scheduleRow.get(SCHEDULE.SCHEDULE_ID_IDX));
             scheduledTaskRow.set(SCHEDULED_TASK.TASK_ID_IDX,taskengineRow.get(TASKENGINE_TASK.TASK_ID_IDX));
             CalendarRowConfig calRowConf = new CalendarRowConfig();
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(startDate);
             calRowConf.setSkipFrequency(0);
             calRowConf.setScheduleType("DAILY");
             calRowConf.setFirstDayOfWeek(1);
-            calRowConf.setExecutionTime(cal.get(Calendar.HOUR_OF_DAY),cal.get(Calendar.MINUTE),cal.get(Calendar.SECOND));
+            calRowConf.setExecutionTime(localTime.getHour(),localTime.getMinute(),localTime.getSecond());
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());
             calRowConf.setStartDate(cal.get(Calendar.DAY_OF_MONTH),cal.get(Calendar.MONTH),cal.get(Calendar.YEAR));
-            System.out.println(calRowConf.getStartDate().toString());
-            calRowConf.setEndDate(endDate);
-            System.out.println(calRowConf.getEndDate().toString());
+            // System.out.println(calRowConf.getStartDate().toString());
+            // calRowConf.setEndDate(endDate);
+            // System.out.println(calRowConf.getEndDate().toString());
             Row calendarRow = calRowConf.toCalendarRow();
             calendarRow.set(CALENDAR.SCHEDULE_ID_IDX, scheduleRow.get(SCHEDULE.SCHEDULE_ID_IDX));
             Row trafficSchedule = new Row("Traffic_Schedule");
@@ -89,12 +104,49 @@ public class ScheduleDao {
             DataObject taskInputDO = pers.constructDataObject();
             Row taskInputRow = new Row(TASK_INPUT.TABLE);
             taskInputDO.addRow(taskInputRow);
-            s.scheduleTask(schedulename,taskname,taskInputDO);
+            s.scheduleTask(schedulename,schedulename,taskInputDO);
             return true;
         } catch (Exception e) {
             logger.info(e.toString());
             e.printStackTrace();
         }
         return false;
+    }
+    public List<Schedule> getSchedules(){
+        List<Schedule> schedules = new LinkedList<>();
+        SelectQuery sq = new SelectQueryImpl(new Table("Traffic_Schedule"));
+        Join join1 = new Join("Traffic_Schedule", "Task_Input", new String[]{"SCHEDULE_ID"}, new String[]{"SCHEDULE_ID"}, Join.INNER_JOIN);
+        Join join2 = new Join("Task_Input", "Schedule", new String[]{"SCHEDULE_ID"}, new String[]{"SCHEDULE_ID"}, Join.INNER_JOIN);
+        sq.addJoin(join1);
+        sq.addJoin(join2);
+        sq.addSelectColumn(new Column("Traffic_Schedule","SCHEDULE_ID" ));
+        sq.addSelectColumn(new Column("Traffic_Schedule","COUNT" ));
+        sq.addSelectColumn(new Column("Traffic_Schedule","TENANT_ID" ));
+        sq.addSelectColumn(new Column("Task_Input","SCHEDULE_TIME"));
+        sq.addSelectColumn(new Column("Task_Input","ADMIN_STATUS"));
+        sq.addSelectColumn(new Column("Schedule","SCHEDULE_NAME" ));
+        RelationalAPI relApi = RelationalAPI.getInstance();
+        Connection conn = null;
+        DataSet ds = null;
+        try {
+            conn = relApi.getConnection();
+            ds = relApi.executeQuery(sq,conn);
+            while(ds.next()){
+                long id = ds.getAsLong("SCHEDULE_ID");
+                long count = ds.getAsLong("COUNT");
+                long tenantid = ds.getAsLong("TENANT_ID");
+                String scheduleTime = ds.getAsString("SCHEDULE_TIME").split(" ")[1];
+                long adminStatus = ds.getAsLong("ADMIN_STATUS");
+                String scheduleName = ds.getAsString("SCHEDULE_NAME");
+                Schedule schedule = new Schedule(id, scheduleName, tenantid, scheduleTime, adminStatus,count);
+                schedules.add(schedule);
+            }
+        } catch (QueryConstructionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
+        return schedules;
     }
 }

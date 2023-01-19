@@ -2,7 +2,6 @@ package api;
 
 import java.io.PrintWriter;
 import java.util.logging.Logger;
-
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,8 +34,6 @@ public class CreateTenant extends HttpServlet {
         }catch(Exception ex){
             logger.warning(ex.toString());
             resp.setStatus(400);
-            // resp.setContentType("application/json");
-            // jobj.put("error", ex.getMessage());
             out.println(ex.getMessage());
         }
     }

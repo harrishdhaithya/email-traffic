@@ -27,17 +27,13 @@
     <div class="form-box">
         <div class="container">
             <div class="header-box">
-                Schedule EMail Traffic
+                Daily Traffic Schedule
             </div>
             <form onsubmit="generateTraffic(event)">
-                <label for="taskname">Enter Yout Task Identifier:</label>
-                <input type="text" name="taskname" id="taskname" class="form-input">
                 <label for="schedulename">Enter Yout Schedule Identifier:</label>
                 <input type="text" name="schedulename" id="schedulename" class="form-input">
-                <label for="startdate">Enter Start Date:</label>
-                <input type="datetime-local" name="startdate" id="startdate" class="form-input">
-                <label for="enddate">Enter End Date:</label>
-                <input type="datetime-local" name="enddate" id="enddate" class="form-input">
+                <label for="time">Time:</label>
+                <input type="time" name="time" id="time" class="form-input">
                 <label for="tenant">Select Tenant:</label>
                 <select name="tenant" id="tenant" class="form-input">
                     <option value="">Select One</option>
