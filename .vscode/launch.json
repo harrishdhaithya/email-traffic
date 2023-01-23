@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch AppTest",
+            "request": "launch",
+            "mainClass": "AppTest",
+            "projectName": "mailtraffic_95ac9838"
+        },
+        {
+            "type": "java",
             "name": "Launch UserPass",
             "request": "launch",
             "mainClass": "UserPass",

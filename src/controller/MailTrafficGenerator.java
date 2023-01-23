@@ -13,14 +13,15 @@ import java.util.concurrent.Future;
 import java.util.logging.Logger;
 import org.json.JSONObject;
 import com.github.javafaker.Faker;
+import auth.CredentialProvider;
 import dao.ConfigDao;
 import exception.CredentialException;
 import microsoft.exchange.webservices.data.core.ExchangeService;
 import microsoft.exchange.webservices.data.core.service.item.EmailMessage;
 import microsoft.exchange.webservices.data.credential.ExchangeCredentials;
-import microsoft.exchange.webservices.data.credential.WebCredentials;
 import microsoft.exchange.webservices.data.property.complex.MessageBody;
 import model.Config;
+import model.Credential;
 import model.Mail;
 import utils.CSVCredUtil;
 import utils.DBCredUtil;
@@ -38,7 +39,6 @@ public class MailTrafficGenerator {
     private String filepath;
     private int seqStart;
     private int seqEnd;
-    private String tenant;
     private String prefix;
     private String suffix;
     private String password;
@@ -48,7 +48,7 @@ public class MailTrafficGenerator {
     private long starttime;
     private long endTime;
     Logger logger = Logger.getLogger(this.getClass().getName());
-    public MailTrafficGenerator(int count,String filepath){
+    public MailTrafficGenerator(int count,String filepath,long tenant_id){
         ConfigDao cdao = ConfigDao.getInstance();
         Config c = cdao.getConfig("poolsize");
         this.count=count;
@@ -57,22 +57,23 @@ public class MailTrafficGenerator {
         this.mailCount=count;
         this.filepath=filepath;
         this.dataSource="csv";
+        this.tenant_id=tenant_id;
         this.es = Executors.newFixedThreadPool(poolSize);
     }
-    public MailTrafficGenerator(int count,String tenant, int seqStart,int seqEnd, String prefix,String suffix,String password){
+    public MailTrafficGenerator(int count, int seqStart,int seqEnd, String prefix,String suffix,String password,long tenant_id){
         ConfigDao cdao = ConfigDao.getInstance();
         Config c = cdao.getConfig("poolsize");
         this.count=count;
         this.countMail=count;
         this.poolSize = (c!=null)?Integer.parseInt(c.getPropValue()):25;
         this.mailCount=count;
-        this.tenant = tenant;
         this.seqStart = seqStart;
         this.seqEnd = seqEnd;
         this.prefix = prefix;
         this.suffix = suffix;
         this.password = password;
         this.dataSource = "sequence";
+        this.tenant_id = tenant_id;
         this.es = Executors.newFixedThreadPool(poolSize);
     }
     public MailTrafficGenerator(long tenant_id,int count){
@@ -100,7 +101,7 @@ public class MailTrafficGenerator {
             if(password==null){
                 throw new CredentialException("The value of the password cannot be null");
             }
-            return new SeqCredUtil(prefix, suffix, tenant, seqStart, seqEnd, password);
+            return new SeqCredUtil(prefix, suffix, tenant_id, seqStart, seqEnd, password);
         }else{
             return new DBCredUtil(this.tenant_id);
         }
@@ -134,6 +135,7 @@ public class MailTrafficGenerator {
         starttime = System.currentTimeMillis();
         List<Future<?>> futures = new ArrayList<>();
         ICredUtil credUtil = getCredUtil();
+        System.out.println(credUtil);
         for(int i=0;i<poolSize;i++){
             ExchangeService eserv = new ExchangeService();
             Runnable r = () -> {
@@ -144,16 +146,22 @@ public class MailTrafficGenerator {
                         }
                         this.count--;
                     }
-                    ExchangeCredentials cred=credUtil.getRandomCredPair();
-                    if(cred==null){
+                    Credential cred=credUtil.getRandomCredPair();
+                    System.out.println(cred.getEmail());
+                    System.out.println(cred.getPassword());
+                    CredentialProvider provider = CredentialProvider.getInstance();
+                    ExchangeCredentials exc;
+                    try {
+                        exc = provider.getCredential(cred.getEmail(), cred.getPassword(),this.tenant_id);
+                    } catch (CredentialException e) {
+                        e.printStackTrace();
                         synchronized(this){
                             this.countMail--;
                             this.failureCount++;
-                            // System.out.println("No Email Found...");
-                            logger.warning("No emails found");
+                            logger.warning(e.toString());
                         }
                         continue;
-                    }
+                    } 
                     Set<String> toList = new HashSet<>();
                     Random rand = new Random();
                     int toCount = rand.nextInt(10)+1;
@@ -164,9 +172,9 @@ public class MailTrafficGenerator {
                     Faker faker = new Faker();
                     String subject = faker.lorem().paragraph();
                     String body = faker.lorem().paragraph();
-                    String fromEmail = ((WebCredentials)cred).getUser();
+                    String fromEmail = cred.getEmail();
                     Mail mail = new Mail(fromEmail, toList, subject, body);
-                    boolean success = sendEmail(eserv,cred, mail);
+                    boolean success = sendEmail(eserv,exc, mail);
                     mail.setStatus(success);
                     if(success){
                         incSuccessCount();
@@ -193,9 +201,9 @@ public class MailTrafficGenerator {
                     e.printStackTrace();
                 }
             }
+            endTime = System.currentTimeMillis();
             this.es.shutdown();
             Thread.currentThread().interrupt();
-            endTime = System.currentTimeMillis();
             logger.info("Completed...");
             logger.info(getStatus());
         };
@@ -206,6 +214,9 @@ public class MailTrafficGenerator {
         JSONObject jobj = new JSONObject();
         jobj.put("success", this.successCount);
         jobj.put("failure", this.failureCount);
+        logger.info("Start Time: "+this.starttime/1000);
+        logger.info("End Time: "+this.endTime/1000);
+        logger.info("Count: "+this.count);
         if(this.countMail==0){
             jobj.put("timetaken", getTimeTaken());
         }

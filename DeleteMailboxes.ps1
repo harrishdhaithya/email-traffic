@@ -1,11 +1,12 @@
 param(
     [Parameter(Mandatory=$true)]
-    $emails
+    $emails,
+    $adminemail,
+    $adminpassword
 )
 $emails = $emails.split(',')
-$AdminEmail = $Env:adminAdminEmail
-$password = ConvertTo-SecureString $Env:adminpassword -AsPlainText -Force
-$cred = New-Object System.Management.Automation.PSCredential($AdminEmail, $password)
+$password = ConvertTo-SecureString $adminpassword -AsPlainText -Force
+$cred = New-Object System.Management.Automation.PSCredential($adminemail, $password)
 Connect-ExchangeOnline -Credential $cred
 foreach ($email in $args) {
     Remove-Mailbox -Identity $email -confirm:$false

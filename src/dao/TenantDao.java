@@ -6,6 +6,8 @@ import java.util.List;
 import com.adventnet.ds.query.Column;
 import com.adventnet.ds.query.Criteria;
 import com.adventnet.ds.query.QueryConstants;
+import com.adventnet.ds.query.UpdateQuery;
+import com.adventnet.ds.query.UpdateQueryImpl;
 import com.adventnet.persistence.DataAccess;
 import com.adventnet.persistence.DataAccessException;
 import com.adventnet.persistence.DataObject;
@@ -25,11 +27,31 @@ public class TenantDao {
         DataObject dobj = new WritableDataObject();
         Row row = new Row("Tenant");
         row.set("TENANT_NAME", t.getName().toLowerCase());
+        row.set("APP_CLIENT_ID",t.getAppClientId());
+        row.set("ADMIN_USERNAME", t.getAdminEmail());
+        row.set("ADMIN_PASSWORD",t.getAdminPassword());
         try {
             dobj.addRow(row);
             DataAccess.add(dobj);
             return true;
         } catch (DataAccessException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public boolean updateTenant(Tenant t){
+        Criteria c = new Criteria(new Column("Tenant", "ID"), t.getId(), QueryConstants.EQUAL);
+        UpdateQuery uq = new UpdateQueryImpl("Tenant");
+        uq.setCriteria(c);
+        uq.setUpdateColumn("TENANT_NAME", t.getName());
+        uq.setUpdateColumn("APP_CLIENT_ID", t.getAppClientId());
+        uq.setUpdateColumn("ADMIN_USERNAME", t.getAdminEmail());
+        uq.setUpdateColumn("ADMIN_PASSWORD", t.getAdminPassword());
+        try {
+            DataAccess.update(uq);
+            return true;
+        } catch (DataAccessException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return false;
@@ -43,7 +65,10 @@ public class TenantDao {
             if(itr.hasNext()){
                 Row row = (Row)itr.next();
                 String tenant_name = row.getString("TENANT_NAME");
-                t = new Tenant(id, tenant_name);
+                String app_clientid = row.getString("APP_CLIENT_ID");
+                String admin_email = row.getString("ADMIN_USERNAME");
+                String admin_password = row.getString("ADMIN_PASSWORD");
+                t = new Tenant(id, tenant_name,app_clientid,admin_email,admin_password);
             } 
         } catch (DataAccessException e) {
             e.printStackTrace();
@@ -59,7 +84,11 @@ public class TenantDao {
                 Row row = (Row)itr.next();
                 long id = row.getLong("ID");
                 String tenant_name = row.getString("TENANT_NAME");
-                Tenant t = new Tenant(id, tenant_name);
+                String app_clientid = row.getString("APP_CLIENT_ID");
+                // String azure_tenantid = row.getString("AZURE_TENANT_ID");
+                String admin_email = row.getString("ADMIN_USERNAME");
+                String admin_password = row.getString("ADMIN_PASSWORD");
+                Tenant t = new Tenant(id, tenant_name,app_clientid,admin_email,admin_password);
                 tenants.add(t);
             }
         }catch(DataAccessException dex){

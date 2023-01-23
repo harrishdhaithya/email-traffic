@@ -35,6 +35,7 @@ public class CreateTraffic extends HttpServlet {
             MailTrafficGenerator gen = null;
             if(datasource.equals("csv")){
                 Part p = req.getPart("file");
+                String tenant_id = req.getParameter("tenant");
                 if(p==null){
                     resp.setStatus(400);
                     jobj.put("error", "Please Upload the file");
@@ -46,27 +47,29 @@ public class CreateTraffic extends HttpServlet {
                 if(!p.getContentType().equals("text/csv")){
                     throw new Exception("Please upload a csv file...");
                 }
-                gen = new MailTrafficGenerator(count, filename);
+                gen = new MailTrafficGenerator(count, filename,Long.parseLong(tenant_id));
                 
             }else if(datasource.equals("sequence")){
+                System.out.println(datasource);
                 String prefix = req.getParameter("prefix");
                 String suffix = req.getParameter("suffix");
-                String tenant = req.getParameter("tenant");
+                String tenantid = req.getParameter("tenant");
                 String password = req.getParameter("password");
                 String seqStartVal = req.getParameter("seqstart");
                 String seqEndVal = req.getParameter("seqend");
+                logger.info(tenantid);
                 if(
                     prefix==null ||
-                    tenant==null ||
+                    tenantid==null ||
                     password == null ||
                     seqStartVal == null ||
                     seqEndVal == null
-                ){
+                ){  
                     throw new Exception("Please fill the required fields...");
                 }
                 int seqStart = Integer.parseInt(seqStartVal);
                 int seqEnd = Integer.parseInt(seqEndVal);
-                gen = new MailTrafficGenerator(count, tenant, seqStart, seqEnd, prefix, suffix, password);
+                gen = new MailTrafficGenerator(count, seqStart, seqEnd, prefix, suffix, password,Long.parseLong(tenantid));
             }else{
                 String tenant_id = req.getParameter("tenant");
                 if(tenant_id==null||tenant_id==""){
@@ -93,7 +96,7 @@ public class CreateTraffic extends HttpServlet {
             out.println(jobj.toString());
             return;
         }catch(Exception servex){
-            // servex.printStackTrace();
+            servex.printStackTrace();
             logger.warning(servex.getStackTrace().toString());
             resp.setStatus(400);
             // jobj.put("error", servex.getMessage());

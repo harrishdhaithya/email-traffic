@@ -16,6 +16,11 @@ public class Credential {
         this.password = password;
         this.tenantId = tenantId;
     }
+    public Credential(String email,String password){
+        System.out.println(email+" "+password);
+        this.email = email;
+        this.password = password;
+    }
     public long getTenantId() {
         return tenantId;
     }

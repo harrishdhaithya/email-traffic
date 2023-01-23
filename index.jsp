@@ -60,12 +60,17 @@
                     <input type="text" name="seqstart" id="seqstart" class="form-input" placeholder="Sequence Start">
                     <label for="seqend" class="form-label">Enter the Ending Number of the Sequence</label>
                     <input type="text" name="seqend" id="seqend" class="form-input" placeholder="Sequence End">
-                    <label for="tenant" class="form-label">Tenant: </label>
-                    <input type="text" name="tenant" id="tenant" class="form-input" placeholder="Tenant">
                     <label for="password" class="form-label">Password: </label>
                     <input type="password" name="password" id="password" class="form-input" placeholder="Password">
                 </div>
-                <div id="db-opt" class="hidden">
+                <!-- <div id="azure-cred" class="hidden">
+                    <label for="azure_tenantid" class="form-label">Enter Tenant ID from Azure AD: </label>
+                    <input type="text" name="azure_tenantid" id="azure_tenantid" class="form-input" placeholder="Tenant">
+                    <label for="app_clientid" class="form-label">Enter App Client Id from Azure AD: </label>
+                    <input type="text" name="app_clientid" id="app_clientid" class="form-input" placeholder="Tenant">
+                </div> -->
+                
+                <div id="common" class="hidden">
                     <label for="tenantid" class="form-label">Tenant: </label>
                     <select name="tenantid" id="tenantid" class="form-input" onchange="changeTenant()">
                         <option value="" selected>Select</option>
@@ -73,10 +78,10 @@
                             <option value=<%=t.getId()%>><%=t.getName()%></option>
                         <%}%>
                     </select>
-                    <div id="senders"></div>
-                    <div id="recievers"></div>
-                </div>
-                <div id="common" class="hidden">
+                    <div id="db-opt" class="hidden">
+                        <div id="senders"></div>
+                        <div id="recievers"></div>
+                    </div>
                     <label for="count" class="form-label">Enter Number of Mails to be sent:</label>
                     <input type="number" name="count" id="count" class="form-input" placeholder="Enter Number of Mails...">
                     <input type="submit" class="form-submit-btn">

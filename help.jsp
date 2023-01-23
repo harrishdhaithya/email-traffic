@@ -21,14 +21,14 @@
         </div>
         <div class="help-content-box">
             <div class="font-bold fs-4">Email Traffic Generator</div>
-            <div class="font-bold fs-3">Purpous: </div>
+            <div class="font-bold fs-3">Purpose: </div>
             <div class="fs-2">
-                The purpous of this application is to Generate a bulk email traffic to mimic a mail flow in a large organization from a M365 tenant using Exchange Web Service.
+                The purpose of this application is to Generate bulk email traffic to mimic a mail flow in a large organization from an M365 tenant using Exchange Web Service.
             </div>
             <div class="font-bold fs-3">Creating Bulk Shared Mail Box: </div>
             <div class="fs-2">
                 This application requires a huge number of shared mail box to send and recieve bulk emails. These shared mail boxes can be generated using a powershell 
-                script as shown below
+                script as shown belowThis application requires a huge number of shared mailboxes to send and receive bulk emails. These shared mailboxes can be generated using a PowerShell script as shown below
                 <div style="background-color: white;width: 60%; margin-left: auto; margin-right: auto; padding: 4px; border-radius: 10px; border: 1px solid black;">
                     <code style="white-space: pre-line;">
                         $email = Read-Host -Prompt "Enter Your Global Admin Account"
@@ -54,11 +54,11 @@
                     1) CSV File: <br> 
                     The Credentials can be uploaded using a CSV File. The CSV File Should contain Header i.e. Email and Password. It should contain 
                     two chunks of data i.e. with password and without password. The emails that contains password will be considered as sender and those which does
-                    not contain password will be considered as reciever.  <br>
+                    not contain password will be considered as receiver.This option requires to configure the tenant information in settings->tenconf.jsp for clientid.<br>
                     <br>
                     2) Generated Sequence: <br>
-                    This data format is for those Credentials that contains similar patterns of email id and same password. This format does not seperate senders and reciever. It takes the senders and 
-                    reciever credentials from same chunk of data. <br>
+                    This data format is for those Credentials that contains similar patterns of email id and same password. This format does not separate senders and receiver. It takes the senders and 
+                    receiver credentials from same chunk of data. <br>
                     <b>Fields: </b> 
                     <ul>
                         <li>Prefix</li>
@@ -69,8 +69,8 @@
                         <li>Password</li>
                     </ul>
                     3) Database: <br>
-                    This data format is very similar to csv but it taskes the credentials from a pre-populated data base. The database can be populated by uploading a csv file in the Populate Database Page i.e. settings->Populate Database.
-                    Similar to csv data format this file also should contain two chunks of data i.e. sender and reciever. This data format can be used when we need to upload large number of data that cannot be populated in java memory.
+                    This data format is very similar to csv but it takes the credentials from a pre-populated data base. The database can be populated by uploading a csv file in the Populate Database Page <br> i.e. settings->Populate Database.
+                    Similar to csv data format this file also should contain two chunks of data i.e. sender and receiver. This data format can be used when we need to upload large number of data that cannot be populated in java memory.
 
                 </div>
                 <div class="font-bold fs-3">Settings and Configurations: </div>
@@ -79,6 +79,17 @@
                     This setting is availabe to populate the credentials in database. <br>
                     2) Tenant Configuration: <br>
                     This setting is used to add tenant for uploading credentials in the database. <br>
+                    Fields: <br>
+                    <ul>
+                        <li>Tenant Name: In the context of this application tenant name refers to primary domain of the m365 tenant eg. 1wqf3d.onmicrosoft.com.</li>
+                        <li>
+                            Client ID: A Client ID is an identifier associated with an application that assists with client / server OAuth 2.0 authentication. To register a public client application and get client id 
+                            refer <a href="https://learn.microsoft.com/en-us/azure/healthcare-apis/azure-api-for-fhir/register-public-azure-ad-client-app" target="_blank">this link.</a> 
+                        </li>
+                        <li>Admin Email(Optional): Email of the global administrator of tenant.</li>
+                        <li>Admin Password(Optional): Password of the global administrator of tenant./li>
+                    </ul>
+                    
                     3) Threadpool Configuration: <br>
                     This setting is used to configure concurrency limit to send emails. <br>
                     4) Schedule Mail Traffic: <br>

@@ -28,6 +28,7 @@ public class GetStatus extends HttpServlet {
         if(gen.isCompleted()){
             session.invalidate();
         }
+        System.out.println(gen.getStatus());
         resp.setStatus(200);
         resp.setContentType("application/json");
         resp.getWriter().println(gen.getStatus());

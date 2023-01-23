@@ -5,13 +5,12 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import microsoft.exchange.webservices.data.credential.ExchangeCredentials;
-import microsoft.exchange.webservices.data.credential.WebCredentials;
+import model.Credential;
 
 public class CSVCredUtil implements ICredUtil {
     private String filepath;
     private List<String> recievers = null;
-    private List<ExchangeCredentials> credentials = null;
+    private List<Credential> credentials = null;
     private String fileContent = null;
     public CSVCredUtil(String filepath) {
         this.filepath = filepath;
@@ -39,7 +38,7 @@ public class CSVCredUtil implements ICredUtil {
         }
         return fileContent;
     }
-    private synchronized List<ExchangeCredentials> getCredentials(){
+    private synchronized List<Credential> getCredentials(){
         if(credentials==null){
             credentials = new ArrayList<>();
             String fileContent = getFileContent();
@@ -49,7 +48,7 @@ public class CSVCredUtil implements ICredUtil {
                 String email = pair[0].trim();
                 if(pair.length==2){
                     String password = pair[1].trim();
-                    credentials.add(new WebCredentials(email,password));
+                    credentials.add(new Credential(email,password));
                 }
             }
         }
@@ -71,9 +70,9 @@ public class CSVCredUtil implements ICredUtil {
         return recievers;
     }
     @Override
-    public ExchangeCredentials getRandomCredPair(){
+    public Credential getRandomCredPair(){
         Random r = new Random();
-        List<ExchangeCredentials> creds = getCredentials();
+        List<Credential> creds = getCredentials();
         if(creds==null){
             return null;
         }

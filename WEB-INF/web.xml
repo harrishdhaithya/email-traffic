@@ -47,6 +47,14 @@
         <url-pattern>/api/addtenant</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>updatetenant</servlet-name>
+        <servlet-class>api.UpdateTenant</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>updatetenant</servlet-name>
+        <url-pattern>/api/updatetenant</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>deletetenant</servlet-name>
         <servlet-class>api.DeleteTenant</servlet-class>
     </servlet>

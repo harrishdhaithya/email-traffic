@@ -21,7 +21,7 @@
         <div class="nav-title">EMail Traffic Generator</div>
         <div class="flex-right">
             <button class="nav-btn" onclick="location.href='/mailtraffic'">Home</button>
-            <button class="nav-btn" onclick="location.href='../settings'">Settings</button>
+            <button class="nav-btn" onclick="location.href='../settings'">Back</button>
         </div>
     </div>
     <div class="form-box">

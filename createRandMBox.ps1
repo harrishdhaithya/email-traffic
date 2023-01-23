@@ -1,10 +1,11 @@
 param (
     [Parameter(Mandatory=$true)]
-    $emails
+    $emails,
+    $adminemail,
+    $adminpassword
 )
-$AdminEmail = $Env:adminemail
-$password = ConvertTo-SecureString $Env:adminpassword -AsPlainText -Force
-$cred = New-Object System.Management.Automation.PSCredential($AdminEmail, $password)
+$password = ConvertTo-SecureString $adminpassword -AsPlainText -Force
+$cred = New-Object System.Management.Automation.PSCredential($adminemail, $password)
 Connect-ExchangeOnline -Credential $cred
 $emails = $emails.split(',')
 Write-Output $emails[0]

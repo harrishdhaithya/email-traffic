@@ -1,6 +1,7 @@
 package api;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class UploadCreds extends HttpServlet {
     Logger logger = Logger.getLogger(this.getClass().getName());
     private String readFile(String filename){
         try {
+            File f = new File(filename);
             BufferedReader reader = new BufferedReader(new FileReader(filename));
             String line = "";
             StringBuilder content = new StringBuilder();
@@ -66,6 +68,7 @@ public class UploadCreds extends HttpServlet {
                 throw new Exception("The value of tenant id is required...");
             }
             String fileName = "E:\\AdventNet\\MickeyLite\\files\\" + p.getSubmittedFileName();
+            System.out.println(req.getContextPath());
             p.write(fileName);
             List<Credential> credentials = getCredentials(fileName, Long.parseLong(tenantId));
             boolean success = cdao.addCredentials(credentials);

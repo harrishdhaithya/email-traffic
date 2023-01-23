@@ -1,8 +1,9 @@
 package utils;
 
-import microsoft.exchange.webservices.data.credential.ExchangeCredentials;
+
+import model.Credential;
 
 public interface ICredUtil {
-    public ExchangeCredentials getRandomCredPair();
+    public Credential getRandomCredPair();
     public String getRandomReciever();
 }

@@ -18,10 +18,16 @@ public class CreateTenant extends HttpServlet {
         try{
             out = resp.getWriter();
             String tenant = req.getParameter("tenant");
+            String app_clientid = req.getParameter("app_clientid");
+            String adminEmail = req.getParameter("admin_email");
+            String adminPassword = req.getParameter("admin_password");
             if(tenant==null){
                 throw new Exception("Enter Tenant Name");
             }
-            Tenant t = new Tenant(tenant);
+            if(app_clientid==null){
+                throw new Exception("Enter App ClientId");
+            }
+            Tenant t = new Tenant(tenant, app_clientid, adminEmail, adminPassword);
             TenantDao tdao = TenantDao.getInstance();
             boolean success = tdao.addTenant(t);
             if(!success){
@@ -34,7 +40,7 @@ public class CreateTenant extends HttpServlet {
         }catch(Exception ex){
             logger.warning(ex.toString());
             resp.setStatus(400);
-            out.println(ex.getMessage());
+            ex.printStackTrace();
         }
     }
 }

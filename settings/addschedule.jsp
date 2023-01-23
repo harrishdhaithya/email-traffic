@@ -30,7 +30,7 @@
                 Daily Traffic Schedule
             </div>
             <form onsubmit="generateTraffic(event)">
-                <label for="schedulename">Enter Yout Schedule Identifier:</label>
+                <label for="schedulename">Enter Yout Schedule Name:</label>
                 <input type="text" name="schedulename" id="schedulename" class="form-input">
                 <label for="time">Time:</label>
                 <input type="time" name="time" id="time" class="form-input">

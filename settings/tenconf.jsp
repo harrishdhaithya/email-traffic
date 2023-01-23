@@ -20,7 +20,7 @@
         <div class="nav-title">EMail Traffic Generator</div>
         <div class="flex-right">
             <button class="nav-btn" onclick="location.href='/mailtraffic'">Home</button>
-            <button class="nav-btn" onclick="location.href='../settings'">Settings</button>
+            <button class="nav-btn" onclick="location.href='../settings'">Back</button>
         </div>
     </div>
     <div class="container-wide">
@@ -33,11 +33,11 @@
         <%}else{%>
             <table>
                 <tr>
-                    <th>ID</th>
                     <th>Name</th>
                     <th>Sender Count</th>
-                    <th>Reciever Count</th>
-                    <th></th>
+                    <th>Receiver Count</th>
+                    <th>Delete</th>
+                    <th>Edit</th>
                 </tr>
                 <%for(Tenant t:tenants){%>
                     <%
@@ -45,12 +45,14 @@
                         JSONObject jobj = cdao.getSenderAndRecCount(t.getId());
                     %>
                         <tr>
-                            <td><%=t.getId()%></td>
                             <td><%=t.getName()%></td>
                             <td><%=jobj.getInt("sender")%></td>
-                            <td><%=jobj.getInt("reciever")%></td>
+                            <td><%=jobj.getInt("receiver")%></td>
                             <td>
                                 <button style="background-color: red;color: white;" value=<%=t.getId()%> onclick="deleteTen(event)">Delete</button>
+                            </td>
+                            <td>
+                                <button style="background-color: blue;color: white;" value=<%=t.getId()%> onclick="editTen(event)">Edit</button>
                             </td>
                         </tr>
                     <%}%>

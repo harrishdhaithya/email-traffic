@@ -1,5 +1,5 @@
 AUTHORITY=https://login.microsoftonline.com/730697ba-470a-4438-a8c3-4c0c6cbd7607/
 CLIENT_ID=118ae560-17ba-47d0-81b2-d8b67a5e4464
-SCOPE=https://ps.outlook.com/Mail.Send
+SCOPE=https://outlook.office365.com/EWS.AccessAsUser.All
 USER_NAME=testing_mailbox_1@1wqf3d.onmicrosoft.com
 USER_PASSWORD=m365password@123
