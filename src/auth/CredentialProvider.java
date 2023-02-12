@@ -3,17 +3,18 @@ package auth;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
-import com.microsoft.aad.msal4j.IAccount;
 import com.microsoft.aad.msal4j.IAuthenticationResult;
-import com.microsoft.aad.msal4j.MsalException;
 import com.microsoft.aad.msal4j.PublicClientApplication;
-import com.microsoft.aad.msal4j.SilentParameters;
 import com.microsoft.aad.msal4j.UserNamePasswordParameters;
 import dao.ConfigDao;
 import dao.TenantDao;
-import exception.CredentialException;
 import microsoft.exchange.webservices.data.credential.ExchangeCredentials;
 import model.Tenant;
+
+
+/*
+ *   Source: https://github.com/Azure-Samples/ms-identity-msal-java-samples/blob/main/2.%20Client-Side%20Scenarios/Username-Password-Flow/src/main/java/UsernamePasswordFlow.java
+ */
 
 public class CredentialProvider {
     private static final String BASE_URL = "https://login.microsoftonline.com/";
@@ -25,69 +26,57 @@ public class CredentialProvider {
         }
         return cp;
     }
+    
     private static IAuthenticationResult acquireTokenUsernamePassword(PublicClientApplication pca,
                                                                       Set<String> scope,
-                                                                      IAccount account,
                                                                       String username,
-                                                                      String password) throws CredentialException {
+                                                                      String password) throws Exception {
         IAuthenticationResult result;
-        try {
-            SilentParameters silentParameters = SilentParameters.builder(scope)
-                                                                .account(account)
-                                                                .build();
-            result = pca.acquireTokenSilently(silentParameters).join();
-        } catch (Exception ex) {
-            if (ex.getCause() instanceof MsalException) {
-                UserNamePasswordParameters parameters =
+        UserNamePasswordParameters parameters =
                         UserNamePasswordParameters
                                 .builder(scope, username, password.toCharArray())
                                 .build();
-                result = pca.acquireToken(parameters).join();
-            } else {
-                ex.printStackTrace();
-                throw new CredentialException("Unable to Authenticate...");
-            }
-        }
+        result = pca.acquireToken(parameters).join();
 
         return result;
     }
-
-    private static IAccount getAccountByUsername(Set<IAccount> accounts, String username) {
-        if (accounts.isEmpty()) {
-            logger.info("No accounts in cache");
-        } else {
-            System.out.println("==Accounts in cache: " + accounts.size());
-            for (IAccount account : accounts) {
-                if (account.username().equals(username)) {
-                    return account;
-                }
-            }
-        }
-        return null;
-    }
-    public ExchangeCredentials getCredential(String username,String password,long tenantid) throws CredentialException{
-        ExchangeCredentials ec = null;
+    public String getToken(String username,String password,long tenantid,Set<String> scopes) throws Exception{
         TenantDao tdao = TenantDao.getInstance();
         Tenant tenant = tdao.getTenant(tenantid);
-        ConfigDao confDao = ConfigDao.getInstance();
-        String scope = confDao.getConfig("scope").getPropValue();
-        Set<String> scopes = new HashSet<>();
-        scopes.add(scope);
         PublicClientApplication pca;
+        IAuthenticationResult result=null;
         try {
             pca = PublicClientApplication.builder(tenant.getAppClientId())
                     .authority(BASE_URL+tenant.getName())
                     .build();
-            Set<IAccount> accountsInCache = pca.getAccounts().join();
-            IAccount account = getAccountByUsername(accountsInCache, username);
-            IAuthenticationResult result = acquireTokenUsernamePassword(pca, scopes, account, username, password);
-            System.out.println(result.accessToken());
-            ec = new OAuthCredentials(result.accessToken());
+            result = acquireTokenUsernamePassword(pca, scopes, username, password);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
+            logger.warning(e.getMessage());
+            throw new Exception("Failed to Acquire Token...");
+        }
+        return result.accessToken();
+    }
+    public String getAdminToken(long tenantid,Set<String> scopes) throws Exception{
+        TenantDao tdao = TenantDao.getInstance();
+        Tenant t = tdao.getTenant(tenantid);
+        String adminuName = t.getAdminEmail();
+        String adminPword = t.getAdminPassword();
+        if(adminuName==null||adminPword==null){
+            throw new Exception("Please Add Admin Credentials in tenant configuration...");
+        }
+        return getToken(adminuName, adminPword, tenantid, scopes);
+    }
+    public ExchangeCredentials getCredential(String username,String password,long tenantid) throws Exception{
+        ExchangeCredentials ec = null;
+        ConfigDao confDao = ConfigDao.getInstance();
+        String scope = confDao.getConfig("scope").getPropValue();
+        Set<String> scopes = new HashSet<>();
+        scopes.add(scope);
+        try {
+            ec = new OAuthCredentials(getToken(username, password, tenantid, scopes));
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new CredentialException("Unable to authenticate...");
-
+            throw new Exception("Unable to authenticate...");
         }
         return ec;
     }

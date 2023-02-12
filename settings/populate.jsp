@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../css/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script src="../js/populate.js"></script>
+    <script src="../js/samplefile.js"></script>
 </head>
 <body>
     <%
@@ -39,6 +40,7 @@
                 </select>
                 <label for="file">CSV File</label>
                 <input type="file" id="file" name="file" class="form-input">
+                <a onclick="downloadSampleFile(event)" >Download Sample File</a>
                 <input type="submit" id="" class="form-submit-btn">
             </form>
         </div>

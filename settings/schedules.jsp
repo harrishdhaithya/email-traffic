@@ -26,7 +26,7 @@
     </div>
     <div class="container-wide">
         <div class="header-box">
-            Scheduled Tasks
+            Daily Traffic Schedules
         </div>
         <div class="table-container">
             <%if(schedules==null||schedules.size()==0){%>
@@ -59,9 +59,9 @@
                             <td><%=s.getCount()%></td>
                             <td>
                                 <%if(s.getStatus()==3){%>
-                                    <button style="background-color: red;color: white;" value=<%=s.getId()%> onclick="disableTask(event)">Disable</button>
+                                    <button name="disable" style="background-color: red;color: white;" value=<%=s.getId()%> onclick="toggleTask(event)">Disable</button>
                                 <%}else{%>
-                                    <button style="background-color: green;color: white;" value=<%=s.getId()%> onclick="enableTask(event)">Enable</button>
+                                    <button name="enable" style="background-color: green;color: white;" value=<%=s.getId()%> onclick="toggleTask(event)">Enable</button>
                                 <%}%>
                             </td>
                         </tr>

@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import dao.ConfigDao;
 import model.Config;
 
-public class UpdateThreadPool extends HttpServlet {
+public class ThreadConf extends HttpServlet {
     Logger logger = Logger.getLogger(this.getClass().getName());
     private static boolean isNumeric(String s){
         boolean numeric = true;
@@ -20,7 +20,7 @@ public class UpdateThreadPool extends HttpServlet {
         return numeric;
     }
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
         PrintWriter out = null;
         JSONObject jobj = new JSONObject();
         try{

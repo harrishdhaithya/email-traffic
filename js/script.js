@@ -112,11 +112,11 @@ function changeTenant(){
         return;
     }
     const param = new URLSearchParams({tenantid});
-    $.get('/mailtraffic/api/getinfo?'+param.toString())
+    $.get('/mailtraffic/api/tenant?'+param.toString())
     .then(json=>{
         senders.classList.remove('hidden');
         reciever.classList.remove('hidden');
         senders.textContent="Senders: "+json.sender;
-        reciever.textContent="Recievers: "+json.reciever;
+        reciever.textContent="Recievers: "+json.receiver;
     }).catch(err=>console.log("Not able to retrieve info..."));    
 }

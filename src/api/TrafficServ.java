@@ -1,5 +1,8 @@
 package api;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.logging.Logger;
 import javax.servlet.annotation.MultipartConfig;
@@ -12,9 +15,8 @@ import org.json.JSONObject;
 import controller.MailTrafficGenerator;
 import dao.CredentialDao;
 
-
 @MultipartConfig
-public class CreateTraffic extends HttpServlet {
+public class TrafficServ extends HttpServlet {
     Logger logger = Logger.getLogger(this.getClass().getName());
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
@@ -42,12 +44,19 @@ public class CreateTraffic extends HttpServlet {
                     out.println(jobj.toString());
                     return;
                 }
-                String filename ="E:\\AdventNet\\MickeyLite\\files\\" + p.getSubmittedFileName();
-                p.write(filename);
                 if(!p.getContentType().equals("text/csv")){
                     throw new Exception("Please upload a csv file...");
                 }
-                gen = new MailTrafficGenerator(count, filename,Long.parseLong(tenant_id));
+                // String filename ="../../../../files/" + p.getSubmittedFileName();
+                // p.write(filename);
+                InputStream is = p.getInputStream();
+                StringBuilder sb = new StringBuilder();
+                String line = "";
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                while ((line=br.readLine())!=null) {
+                    sb.append(line+"\n");
+                }
+                gen = new MailTrafficGenerator(count, sb.toString(),Long.parseLong(tenant_id));
                 
             }else if(datasource.equals("sequence")){
                 System.out.println(datasource);
@@ -78,12 +87,9 @@ public class CreateTraffic extends HttpServlet {
                 CredentialDao cdao = CredentialDao.getInstance();
                 JSONObject teninfo = cdao.getSenderAndRecCount(Long.parseLong(tenant_id));
                 int senders = teninfo.getInt("sender");
-                int recievers = teninfo.getInt("reciever");
+                // int recievers = teninfo.getInt("receiver");
                 if(senders==0){
                     throw new Exception("No Senders found");
-                }
-                if(recievers==0){
-                    throw new Exception("No Recievers found");
                 }
                 gen = new MailTrafficGenerator(Long.parseLong(tenant_id),count);
             }

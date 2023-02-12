@@ -13,6 +13,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <script src="js/script.js"></script>
+    <script src="js/samplefile.js"></script>
 </head>
 <body>
     <%
@@ -43,13 +44,13 @@
                 <select name="datasource" id="datasource" class="form-input" onchange="changeOpt();">
                     <option value="" selected>Select</option>
                     <option value="csv">CSV File</option>
-                    <option value="sequence">Sequence</option>
+                    <!-- <option value="sequence">Sequence</option> -->
                     <option value="db">Database</option>
                 </select>
                 <div id="csv-opt" class="hidden">
                     <label for="file" class="form-label">Upload File:</label>
                     <input type="file" name="file" id="file" class="form-input" placeholder="Upload File">
-                    
+                    <a onclick="downloadSampleFile(event)" >Download Sample File</a>
                 </div>
                 <div id="seq-opt" class="hidden">
                     <label for="prefix" class="form-label">Enter the prefix of the Sequence</label>

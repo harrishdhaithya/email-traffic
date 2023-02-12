@@ -1,47 +1,45 @@
 package utils;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import model.Credential;
 
 public class CSVCredUtil implements ICredUtil {
-    private String filepath;
+    private String fileContent;
     private List<String> recievers = null;
     private List<Credential> credentials = null;
-    private String fileContent = null;
-    public CSVCredUtil(String filepath) {
-        this.filepath = filepath;
+    // private String fileContent = null;
+    public CSVCredUtil(String fileContent) {
+        this.fileContent = fileContent;
     }
-    private String readFile(){
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(this.filepath));
-            String line = "";
-            StringBuilder content = new StringBuilder();
-            //header 
-            reader.readLine();
-            while ((line = reader.readLine())!=null) {
-                content.append(line+"\n");
-            }
-            reader.close();
-            return content.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-    private synchronized String getFileContent(){
-        if(fileContent==null){
-            fileContent = readFile();
-        }
-        return fileContent;
-    }
+    // private String readFile(){
+    //     try {
+    //         BufferedReader reader = new BufferedReader(new FileReader(this.filepath));
+    //         String line = "";
+    //         StringBuilder content = new StringBuilder();
+    //         //header 
+    //         reader.readLine();
+    //         while ((line = reader.readLine())!=null) {
+    //             content.append(line+"\n");
+    //         }
+    //         reader.close();
+    //         return content.toString();
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //     }
+    //     return null;
+    // }
+    // private synchronized String getFileContent(){
+    //     if(fileContent==null){
+    //         fileContent = readFile();
+    //     }
+    //     return fileContent;
+    // }
     private synchronized List<Credential> getCredentials(){
         if(credentials==null){
             credentials = new ArrayList<>();
-            String fileContent = getFileContent();
+            // String fileContent = getFileContent();
             String[] users = fileContent.split("\n");
             for(String user: users){
                 String[] pair = user.split(",");
@@ -57,7 +55,7 @@ public class CSVCredUtil implements ICredUtil {
     private synchronized List<String> getRecievers(){
         if(recievers==null){
             recievers = new ArrayList<>();
-            String fileContent = getFileContent();
+            // String fileContent = getFileContent();
             String[] users = fileContent.split("\n");
             for(String user:users){
                 String[] pair = user.split(",");

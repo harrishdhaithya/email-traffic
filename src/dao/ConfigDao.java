@@ -1,6 +1,8 @@
 package dao;
 
 import java.util.Iterator;
+import java.util.logging.Logger;
+
 import com.adventnet.ds.query.Column;
 import com.adventnet.ds.query.Criteria;
 import com.adventnet.ds.query.QueryConstants;
@@ -14,6 +16,7 @@ import com.adventnet.persistence.WritableDataObject;
 import model.Config;
 
 public class ConfigDao {
+    private static Logger logger = Logger.getLogger(ConfigDao.class.getName());
     private static ConfigDao cdao = null;
     public static ConfigDao getInstance(){
         if(cdao==null){
@@ -31,6 +34,7 @@ public class ConfigDao {
             DataAccess.update(dobj);
             return true;
         } catch (DataAccessException e) {
+            logger.warning(e.getMessage());
             e.printStackTrace();
         }
         return false;
@@ -44,6 +48,7 @@ public class ConfigDao {
             DataAccess.update(uq);
             return true;
         } catch (DataAccessException e) {
+            logger.warning(e.getMessage());
             e.printStackTrace();
         }
         return false;
@@ -61,7 +66,7 @@ public class ConfigDao {
                 conf = new Config(id,prop_name, prop_value);
             }
         } catch (DataAccessException e) {
-            // TODO Auto-generated catch block
+            logger.warning(e.getMessage());
             e.printStackTrace();
         }
         return conf;

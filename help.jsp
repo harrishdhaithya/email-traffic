@@ -56,7 +56,7 @@
                     two chunks of data i.e. with password and without password. The emails that contains password will be considered as sender and those which does
                     not contain password will be considered as receiver.This option requires to configure the tenant information in settings->tenconf.jsp for clientid.<br>
                     <br>
-                    2) Generated Sequence: <br>
+                    2) Generated Sequence(Not Supported): <br>
                     This data format is for those Credentials that contains similar patterns of email id and same password. This format does not separate senders and receiver. It takes the senders and 
                     receiver credentials from same chunk of data. <br>
                     <b>Fields: </b> 
@@ -87,7 +87,7 @@
                             refer <a href="https://learn.microsoft.com/en-us/azure/healthcare-apis/azure-api-for-fhir/register-public-azure-ad-client-app" target="_blank">this link.</a> 
                         </li>
                         <li>Admin Email(Optional): Email of the global administrator of tenant.</li>
-                        <li>Admin Password(Optional): Password of the global administrator of tenant./li>
+                        <li>Admin Password(Optional): Password of the global administrator of tenant.</li>
                     </ul>
                     
                     3) Threadpool Configuration: <br>

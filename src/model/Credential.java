@@ -5,11 +5,13 @@ public class Credential {
     private String email;
     private String password;
     private long tenantId;
-    public Credential(long id, String email, String password, long tenantId) {
+    private String status;
+    public Credential(long id, String email, String password, long tenantId,String status) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.tenantId = tenantId;
+        this.status = status;
     }
     public Credential(String email, String password, long tenantId) {
         this.email = email;
@@ -17,7 +19,6 @@ public class Credential {
         this.tenantId = tenantId;
     }
     public Credential(String email,String password){
-        System.out.println(email+" "+password);
         this.email = email;
         this.password = password;
     }
@@ -45,8 +46,10 @@ public class Credential {
     public void setPassword(String password){
         this.password = password;
     }
-    @Override
-    public String toString() {
-        return "Credential [id=" + id + ", email=" + email + ", password=" + password + ", tenantId=" + tenantId + "]";
+    public void setStatus(String status){
+        this.status = status;
+    }
+    public String getStatus(){
+        return status;
     }
 }

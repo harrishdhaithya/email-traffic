@@ -7,8 +7,8 @@ import microsoft.exchange.webservices.data.credential.ExchangeCredentials;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
-/**
- * OAuth Token handler class for EWS requests
+/* 
+ *  Source: https://gist.github.com/keshy/0ec56956e91e59e14fee7a892a7af919
  */
 public final class OAuthCredentials extends ExchangeCredentials {
 
@@ -25,7 +25,7 @@ public final class OAuthCredentials extends ExchangeCredentials {
 	public String getToken() {
 		return token;
 	}
-
+	
 	private OAuthCredentials(String token, boolean isRawToken) throws Exception {
 		EwsUtilities.validateParam(token, "token");
 

@@ -11,17 +11,15 @@ import java.util.logging.Logger;
 import com.adventnet.taskengine.Task;
 import com.adventnet.taskengine.TaskContext;
 import com.adventnet.taskengine.TaskExecutionException;
-
 import dao.ConfigDao;
 import dao.CredentialDao;
 import dao.TenantDao;
-import model.Config;
 import model.Credential;
 import model.Tenant;
 
 public class CreateCredTask implements Task {
-    private static Logger logger = Logger.getLogger(Task.class.getName());
-    private static String getRandom10Digit(){
+    private static Logger logger = Logger.getLogger(CreateCredTask.class.getName());
+    private static String getRandomDigit(int digit){
         String num = "";
         for(int i=0;i<10;i++){
             Random rand = new Random();
@@ -32,37 +30,34 @@ public class CreateCredTask implements Task {
     }
     private static String CreateRandomEmail(Tenant t){
         String prefix = "testing_mailbox_";
-        String random = getRandom10Digit();
+        String random = getRandomDigit(10);
         return prefix+random;
     }
-    private List<String> get10Emails(Tenant t){
-        List<String> emails = new ArrayList<>(10);
-        for(int i=0;i<10;i++){
+    private List<String> getEmails(Tenant t,int count){
+        List<String> emails = new ArrayList<>(count);
+        for(int i=0;i<count;i++){
             String email = CreateRandomEmail(t);
             emails.add(email);
         }
         return emails;
     }
-    private List<Credential> formCredList(List<String> names,String domain,String password){
+    private List<Credential> formCredList(List<String> names,Tenant t,String password){
         List<Credential> credentials = new ArrayList<>(names.size());
         for(String email: names){
-            credentials.add(new Credential(email+"@"+domain,password));
+            credentials.add(new Credential(email+"@"+t.getName(),password,t.getId()));
         }
         return credentials;
     }
     @Override
     public void executeTask(TaskContext arg0) throws TaskExecutionException {
         ConfigDao confdao = ConfigDao.getInstance();
-        Config conf = confdao.getConfig("autousercreate");
-        if(conf==null||conf.getPropValue().equals("false")){
-            return;
-        }
+        String scriptpath = confdao.getConfig("scriptpath").getPropValue();
         TenantDao tdao = TenantDao.getInstance();
         CredentialDao cdao = CredentialDao.getInstance();
         List<Tenant> tenants = tdao.getAllTenants();
         for(Tenant t:tenants){
-            List<String> emails = get10Emails(t);
-            ProcessBuilder pb = new ProcessBuilder("C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe","../webapps/mailtraffic/CreateRandMBox.ps1","-emails",String.join(",", emails),"-adminemail",t.getAdminEmail(),"-adminpassword",t.getAdminPassword())
+            List<String> emails = getEmails(t,10);
+            ProcessBuilder pb = new ProcessBuilder("C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",scriptpath,"-emails",String.join(",", emails),"-adminemail",t.getAdminEmail(),"-adminpassword",t.getAdminPassword(),"-operation","create")
             .redirectInput(ProcessBuilder.Redirect.INHERIT) 
             .redirectOutput(ProcessBuilder.Redirect.INHERIT) 
             .redirectError(ProcessBuilder.Redirect.INHERIT);
@@ -74,10 +69,10 @@ public class CreateCredTask implements Task {
                 while((line=br.readLine())!=null){
                     logger.info(line);
                 }
-                List<Credential> creds = formCredList(emails,t.getName(), "m365password@123");
+                List<Credential> creds = formCredList(emails,t, "m365password@123");
                 boolean success = cdao.addCredentials(creds);
                 if(!success){
-                    logger.info("Failed to add Credential...");
+                    logger.warning("Failed to add Credential...");
                 }
             } catch (IOException e) {
                 // TODO Auto-generated catch block

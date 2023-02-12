@@ -6,10 +6,15 @@ function getStatus(){
         let failure = document.getElementById('failure');
         let processing = document.getElementById('processing');
         let timetaken = document.getElementById('timetaken');
+        let starttime = document.getElementById('starttime');
+        let endtime = document.getElementById('endtime');
+        console.log(starttime);
+        console.log(endtime);
         success.textContent="Success: "+json.success;
         failure.textContent="Failure: "+json.failure;
         processing.textContent="Pending: "+json.pending;
-        if(Number(json.pending)==0){
+        starttime.textContent="Start Time: "+formatDate(json.starttime);
+        if(json.endtime&&json.timetaken){
             let loading = document.getElementById('loading');
             loading.classList.add('hidden');
             console.log(json.timetaken);
@@ -27,11 +32,23 @@ function getStatus(){
                 timetext+=seconds+" seconds."
             }
             timetaken.textContent = "Timetaken: "+timetext;
+            endtime.textContent = "End Time: "+formatDate(json.endtime);
             clearTimeout(timeout);
         }
     }).catch(err=>{
+        console.log(err)
         location.href="/mailtraffic"
     })
     timeout = setTimeout(getStatus,3000);
 }
 getStatus();
+
+
+function formatDate(datestr) {
+    var month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul","Aug", "Sep", "Oct", "Nov", "Dec"];
+    let date = new Date(datestr);
+    return date.getDate()+"-"+month[date.getMonth()]+"-"+date.getFullYear()+" "+date.toLocaleTimeString();
+}
+
+
+

@@ -60,7 +60,7 @@ body{
     margin-right: auto;
     margin-top: 100px;
     margin-bottom: 30px;
-    width: 750px;
+    width: 780px;
     border-radius: 5px;
     border: 0.5px solid black;
 }
@@ -114,7 +114,7 @@ body{
 }
 
 .hidden{
-    display: none;
+    display: none !important;
 }
 
 .loading-screen{
@@ -218,8 +218,9 @@ button, input[type="submit"]{
 table, th, td {
     border: 1px solid black;
     border-collapse: collapse;
-    font-size: 20px;
+    font-size: 16px;
     padding: 3px;
+    position: relative;
 }
 th{
     background-color: #6ECCAF;
@@ -248,4 +249,44 @@ td{
     font-size: 14px;
     border: 0.3px solid black;
     transform: translateY(-40%);
+}
+
+.pagination {
+    display: inline-block;
+}
+  
+.pagination button,.pagination div {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+    border: 1px solid #ddd;
+    font-size: 22px;
+    background-color: white;
+    cursor: pointer;
+}
+.pagination div{
+    background-color: #4CAF50;
+}
+
+.pagination button.active {
+    background-color: #4CAF50;
+    color: white;
+    border: 1px solid #4CAF50;
+}
+
+.pagination button:hover:not(.active) {background-color: #ddd;}
+
+
+.pagination-container{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 5px;
+}
+
+a{
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
 }

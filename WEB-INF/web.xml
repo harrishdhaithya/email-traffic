@@ -8,7 +8,7 @@
     </session-config>
     <servlet>
         <servlet-name>generate</servlet-name>
-        <servlet-class>api.CreateTraffic</servlet-class>
+        <servlet-class>api.TrafficServ</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>generate</servlet-name>
@@ -16,7 +16,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>status</servlet-name>
-        <servlet-class>api.GetStatus</servlet-class>
+        <servlet-class>api.Status</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>status</servlet-name>
@@ -24,82 +24,58 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>updatepool</servlet-name>
-        <servlet-class>api.UpdateThreadPool</servlet-class>
+        <servlet-class>api.ThreadConf</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>updatepool</servlet-name>
         <url-pattern>/api/updatepool</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>upload</servlet-name>
-        <servlet-class>api.UploadCreds</servlet-class>
+        <servlet-name>cred</servlet-name>
+        <servlet-class>api.CredentialServ</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>upload</servlet-name>
-        <url-pattern>/api/uploadcreds</url-pattern>
+        <servlet-name>cred</servlet-name>
+        <url-pattern>/api/cred</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>addtenant</servlet-name>
-        <servlet-class>api.CreateTenant</servlet-class>
+        <servlet-name>tenant</servlet-name>
+        <servlet-class>api.TenantServ</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>addtenant</servlet-name>
-        <url-pattern>/api/addtenant</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>updatetenant</servlet-name>
-        <servlet-class>api.UpdateTenant</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>updatetenant</servlet-name>
-        <url-pattern>/api/updatetenant</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>deletetenant</servlet-name>
-        <servlet-class>api.DeleteTenant</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>deletetenant</servlet-name>
-        <url-pattern>/api/deletetenant</url-pattern>
-    </servlet-mapping>
-    <servlet>
-        <servlet-name>getinfo</servlet-name>
-        <servlet-class>api.GetTenInfo</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>getinfo</servlet-name>
-        <url-pattern>/api/getinfo</url-pattern>
+        <servlet-name>tenant</servlet-name>
+        <url-pattern>/api/tenant</url-pattern>
     </servlet-mapping>
     <servlet>
         <servlet-name>schedule</servlet-name>
-        <servlet-class>api.CreateSchedule</servlet-class>
+        <servlet-class>api.ScheduleServ</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>schedule</servlet-name>
         <url-pattern>/api/schedule</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>disablesch</servlet-name>
-        <servlet-class>api.DisableSchedule</servlet-class>
+        <servlet-name>samplefile</servlet-name>
+        <servlet-class>api.SampleFile</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>disablesch</servlet-name>
-        <url-pattern>/api/schedule/disable</url-pattern>
+        <servlet-name>samplefile</servlet-name>
+        <url-pattern>/api/samplefile</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>enablesch</servlet-name>
-        <servlet-class>api.EnableSchedule</servlet-class>
+        <servlet-name>mailtraces</servlet-name>
+        <servlet-class>api.MailTraceServ</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>enablesch</servlet-name>
-        <url-pattern>/api/schedule/enable</url-pattern>
+        <servlet-name>mailtraces</servlet-name>
+        <url-pattern>/api/mailtrace</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>test</servlet-name>
-        <servlet-class>api.Test</servlet-class>
+        <servlet-name>mailtracestatus</servlet-name>
+        <servlet-class>api.MailTraceStatus</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>test</servlet-name>
-        <url-pattern>/api/test</url-pattern>
+        <servlet-name>mailtracestatus</servlet-name>
+        <url-pattern>/api/mailtrace/status</url-pattern>
     </servlet-mapping>
 </web-app>

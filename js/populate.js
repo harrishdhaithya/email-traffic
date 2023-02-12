@@ -16,7 +16,7 @@ function uploadData(event) {
     $.ajax({
         type: "POST",
         enctype: 'multipart/form-data',
-        url: "/mailtraffic/api/uploadcreds",
+        url: '/mailtraffic/api/cred',
         data: formData,
         processData: false,
         contentType: false,
@@ -26,6 +26,6 @@ function uploadData(event) {
         location.reload();
     }).catch(err=>{
         // const json = JSON.parse(err.responseText);
-        alert(err.responseText);
+        alert('Not able to upload data...');
     });
 }

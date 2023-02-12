@@ -16,35 +16,45 @@ import model.Config;
 import model.Tenant;
 
 public class DeleteCredTask implements Task {
-    Logger logger = Logger.getLogger(this.getClass().getName());
+    private static Logger logger = Logger.getLogger(DeleteCredTask.class.getName());
     @Override
     public void executeTask(TaskContext arg0) throws TaskExecutionException {
         ConfigDao confdao = ConfigDao.getInstance();
-        Config conf = confdao.getConfig("autouserdelete");
-        if(conf==null||conf.getPropValue().equals("false")){
-            return;
-        }
+        // String powerShellPath = confdao.getConfig("powershell").getPropValue();
+        String scriptpath = confdao.getConfig("scriptpath").getPropValue();
         TenantDao tdao = TenantDao.getInstance();
         List<Tenant> tenants = tdao.getAllTenants();
         CredentialDao cdao = CredentialDao.getInstance();
         for(Tenant t:tenants){
-            String[] emails = cdao.deleteNRandomEmail(t.getId(), 10);
-            ProcessBuilder pb = new ProcessBuilder("C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe","../webapps/mailtraffic/deleteMailboxes.ps1","-emails",String.join(",", emails),"-adminemail",t.getAdminEmail(),"-adminpassword",t.getAdminPassword())
-            .redirectInput(ProcessBuilder.Redirect.INHERIT) 
-            .redirectOutput(ProcessBuilder.Redirect.INHERIT) 
-            .redirectError(ProcessBuilder.Redirect.INHERIT);
-            try {
-                Process proc = pb.start();
-                InputStream is = proc.getInputStream();
-                BufferedReader br = new BufferedReader(new InputStreamReader(is));
-                String line = "";
-                while((line=br.readLine())!=null){
-                    logger.info(line);
+            long count = cdao.getCredCount(t.getId());
+            logger.info(count+"");
+            if(count>=100){
+                String[] emails = cdao.getNRandomEmails(t.getId(), 10);
+                ProcessBuilder pb = new ProcessBuilder("C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",scriptpath,"-emails",String.join(",", emails),"-adminemail",t.getAdminEmail(),"-adminpassword",t.getAdminPassword(),"-operation","delete")
+                .redirectInput(ProcessBuilder.Redirect.INHERIT) 
+                .redirectOutput(ProcessBuilder.Redirect.INHERIT) 
+                .redirectError(ProcessBuilder.Redirect.INHERIT);
+                try {
+                    Process proc = pb.start();
+                    InputStream is = proc.getInputStream();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                    String line = "";
+                    while((line=br.readLine())!=null){
+                        logger.info(line);
+                    }
+                    boolean success = cdao.deleteMailboxes(emails);
+                    if(!success){
+                        logger.warning("Failed to update deleted mails in db...");
+                        throw new TaskExecutionException("Failed to update deleted mails in db...");
+                    }
+                    logger.warning("Successfully Deleted Mails");
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    throw new TaskExecutionException(e);
                 }
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             }
+            
         }
     }
 

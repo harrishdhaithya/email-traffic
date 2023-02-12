@@ -33,7 +33,6 @@ import com.adventnet.taskengine.Scheduler;
 import com.adventnet.taskengine.TASKENGINE_TASK;
 import com.adventnet.taskengine.TASK_INPUT;
 import com.adventnet.taskengine.util.CalendarRowConfig;
-
 import model.Schedule;
 import model.TaskSchedule;
 
@@ -45,7 +44,7 @@ public class ScheduleDao {
         }
         return sdao;
     }
-    private Logger logger = Logger.getLogger(this.getClass().getName());
+    private static Logger logger = Logger.getLogger(ScheduleDao.class.getName());
     public TaskSchedule getScheduleById(long scheduleid){
         Criteria c = new Criteria(new Column("Traffic_Schedule", "SCHEDULE_ID"), scheduleid, QueryConstants.EQUAL);
         TaskSchedule ts = null;
@@ -60,6 +59,7 @@ public class ScheduleDao {
                 ts = new TaskSchedule(id, tenant_id,scheduleid, count);
             }
         } catch (DataAccessException e) {
+            logger.warning(e.getMessage());
             e.printStackTrace();
         }
         return ts;
@@ -107,7 +107,7 @@ public class ScheduleDao {
             s.scheduleTask(schedulename,schedulename,taskInputDO);
             return true;
         } catch (Exception e) {
-            logger.info(e.toString());
+            logger.warning(e.getMessage());
             e.printStackTrace();
         }
         return false;
@@ -142,11 +142,27 @@ public class ScheduleDao {
                 schedules.add(schedule);
             }
         } catch (QueryConstructionException e) {
-            // TODO Auto-generated catch block
+            logger.warning(e.getMessage());
             e.printStackTrace();
         }catch(SQLException ex){
+            logger.warning(ex.getMessage());
             ex.printStackTrace();
         }
         return schedules;
+    }
+    public long getTaskId(long scheduleid){
+        Criteria c = new Criteria(new Column(SCHEDULED_TASK.TABLE, SCHEDULED_TASK.SCHEDULE_ID), scheduleid, QueryConstants.EQUAL);
+        try {
+            DataObject dobj = DataAccess.get(SCHEDULED_TASK.TABLE, c);
+            Iterator itr = dobj.getRows(SCHEDULED_TASK.TABLE);
+            if(itr.hasNext()){
+                Row row = (Row)itr.next();
+                long taskid = row.getLong(SCHEDULED_TASK.SCHEDULE_ID);
+                return taskid;
+            }
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

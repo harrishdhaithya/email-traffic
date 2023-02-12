@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <%@ page import="model.Tenant,dao.TenantDao"%>
 <html lang="en">
 <head>

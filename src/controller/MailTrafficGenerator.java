@@ -1,7 +1,8 @@
 package controller;
 
-import java.io.File;
 import java.net.URI;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +16,6 @@ import org.json.JSONObject;
 import com.github.javafaker.Faker;
 import auth.CredentialProvider;
 import dao.ConfigDao;
-import exception.CredentialException;
 import microsoft.exchange.webservices.data.core.ExchangeService;
 import microsoft.exchange.webservices.data.core.service.item.EmailMessage;
 import microsoft.exchange.webservices.data.credential.ExchangeCredentials;
@@ -36,26 +36,30 @@ public class MailTrafficGenerator {
     private final int mailCount;
     private int poolSize;
     private String dataSource;
-    private String filepath;
+    private String fileContent;
     private int seqStart;
     private int seqEnd;
     private String prefix;
     private String suffix;
     private String password;
     private int countMail;
+    private boolean completed=false;
     private ExecutorService es;
     private long tenant_id;
     private long starttime;
     private long endTime;
-    Logger logger = Logger.getLogger(this.getClass().getName());
-    public MailTrafficGenerator(int count,String filepath,long tenant_id){
+    private Timestamp startTimeStamp;
+    private Timestamp endTimestamp;
+    private static Logger logger = Logger.getLogger(MailTrafficGenerator.class.getName());
+    
+    public MailTrafficGenerator(int count,String fileContent,long tenant_id){
         ConfigDao cdao = ConfigDao.getInstance();
         Config c = cdao.getConfig("poolsize");
         this.count=count;
         this.countMail=count;
         this.poolSize = (c!=null)?Integer.parseInt(c.getPropValue()):25;
         this.mailCount=count;
-        this.filepath=filepath;
+        this.fileContent=fileContent;
         this.dataSource="csv";
         this.tenant_id=tenant_id;
         this.es = Executors.newFixedThreadPool(poolSize);
@@ -87,19 +91,15 @@ public class MailTrafficGenerator {
         this.dataSource = "db";
         this.es = Executors.newFixedThreadPool(poolSize);
     }
-    private ICredUtil getCredUtil() throws CredentialException{
+    private ICredUtil getCredUtil() throws Exception{
         if(dataSource.equals("csv")){
-            File f = new File(this.filepath);
-            if(!f.exists()){
-                throw new CredentialException("FILE NOT FOUND...");
-            }
-            return new CSVCredUtil(this.filepath);
+            return new CSVCredUtil(this.fileContent);
         }else if(dataSource.equals("sequence")){
             if(seqStart>seqEnd){
-                throw new CredentialException("Invalid Interval");
+                throw new Exception("Invalid Interval");
             }
             if(password==null){
-                throw new CredentialException("The value of the password cannot be null");
+                throw new Exception("The value of the password cannot be null");
             }
             return new SeqCredUtil(prefix, suffix, tenant_id, seqStart, seqEnd, password);
         }else{
@@ -131,8 +131,9 @@ public class MailTrafficGenerator {
     private synchronized void incFailureCount(){
         this.failureCount++;
     }
-    public void generateTraffic() throws CredentialException{
+    public void generateTraffic() throws Exception{
         starttime = System.currentTimeMillis();
+        startTimeStamp = Timestamp.valueOf(LocalDateTime.now());
         List<Future<?>> futures = new ArrayList<>();
         ICredUtil credUtil = getCredUtil();
         System.out.println(credUtil);
@@ -153,12 +154,12 @@ public class MailTrafficGenerator {
                     ExchangeCredentials exc;
                     try {
                         exc = provider.getCredential(cred.getEmail(), cred.getPassword(),this.tenant_id);
-                    } catch (CredentialException e) {
+                    } catch (Exception e) {
+                        logger.warning(e.toString());
                         e.printStackTrace();
                         synchronized(this){
                             this.countMail--;
-                            this.failureCount++;
-                            logger.warning(e.toString());
+                            this.failureCount++;                            
                         }
                         continue;
                     } 
@@ -194,18 +195,20 @@ public class MailTrafficGenerator {
     private void handleThread(){
         Runnable r = ()->{
             while(this.countMail!=0){
-                System.out.println("Status: "+getStatus());
+                logger.info("Status: "+getStatus());
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            endTime = System.currentTimeMillis();
             this.es.shutdown();
-            Thread.currentThread().interrupt();
             logger.info("Completed...");
             logger.info(getStatus());
+            endTime = System.currentTimeMillis();
+            endTimestamp = Timestamp.valueOf(LocalDateTime.now());
+            completed=true;
+            Thread.currentThread().interrupt();
         };
         Thread t = new Thread(r);
         t.start();
@@ -214,11 +217,13 @@ public class MailTrafficGenerator {
         JSONObject jobj = new JSONObject();
         jobj.put("success", this.successCount);
         jobj.put("failure", this.failureCount);
+        jobj.put("starttime", startTimeStamp.toString());
         logger.info("Start Time: "+this.starttime/1000);
         logger.info("End Time: "+this.endTime/1000);
         logger.info("Count: "+this.count);
-        if(this.countMail==0){
+        if(this.completed){
             jobj.put("timetaken", getTimeTaken());
+            jobj.put("endtime", endTimestamp.toString());
         }
         jobj.put("pending",this.mailCount-(this.successCount+this.failureCount));
         return jobj.toString();
@@ -233,7 +238,7 @@ public class MailTrafficGenerator {
         return this.count;
     }
     public boolean isCompleted(){
-        return this.countMail==0;
+        return this.completed;
     }
     private long getTimeTaken(){
         return (endTime-starttime)/1000;

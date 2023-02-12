@@ -22,7 +22,7 @@ public class SeqCredUtil implements ICredUtil {
         this.tenant = tdao.getTenant(tenant_id);
     }
     @Override
-    public  Credential getRandomCredPair(){
+    public Credential getRandomCredPair(){
         Random rand = new Random();
         int randInt = this.seqStart+rand.nextInt(this.seqEnd)+1;
         System.out.println(this.tenant.getName());

@@ -1,28 +1,19 @@
-function disableTask(event) {
+function toggleTask(event) {
+    let name = event.target.name;
     let id = event.target.value;
-    if(
-        !id
-    ){
-        alert('Unable to Disable...');
-        return;
-    }
-    $.get('/mailtraffic/api/schedule/disable?id='+id)
+    let status = name=="enable";
+    let params = new URLSearchParams({id,status})
+    $.ajax('/mailtraffic/api/schedule?'+params.toString(),{
+        method: 'PUT'
+    })
     .then(resp=>{
         alert(resp.message);
         location.reload();
-    }).catch(err=>alert('Unable to Disable...'))
-}
-function enableTask(event) {
-    let id = event.target.value;
-    if(
-        !id
-    ){
-        alert('Unable to Enable...');
-        return;
-    }
-    $.get('/mailtraffic/api/schedule/enable?id='+id)
-    .then(resp=>{
-        alert(resp.message);
-        location.reload();
-    }).catch(err=>alert('Unable to Enable...'))
+    }).catch(err=>{
+        if(name=='enable'){
+            alert('Unable to Enable...');
+        }else{
+            alert('Unable to Disable...')
+        }
+    })
 }

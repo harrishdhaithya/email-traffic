@@ -3,6 +3,8 @@ package dao;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
+
 import com.adventnet.ds.query.Column;
 import com.adventnet.ds.query.Criteria;
 import com.adventnet.ds.query.QueryConstants;
@@ -17,6 +19,7 @@ import model.Tenant;
 
 public class TenantDao {
     private static TenantDao tdao = null;
+    private static Logger logger = Logger.getLogger(TenantDao.class.getName());
     public static TenantDao getInstance(){
         if(tdao==null){
             tdao = new TenantDao();
@@ -35,6 +38,7 @@ public class TenantDao {
             DataAccess.add(dobj);
             return true;
         } catch (DataAccessException e) {
+            logger.warning(e.getMessage());
             e.printStackTrace();
         }
         return false;
@@ -51,7 +55,7 @@ public class TenantDao {
             DataAccess.update(uq);
             return true;
         } catch (DataAccessException e) {
-            // TODO Auto-generated catch block
+            logger.warning(e.getMessage());
             e.printStackTrace();
         }
         return false;
@@ -71,6 +75,7 @@ public class TenantDao {
                 t = new Tenant(id, tenant_name,app_clientid,admin_email,admin_password);
             } 
         } catch (DataAccessException e) {
+            logger.warning(e.getMessage());
             e.printStackTrace();
         }
         return t;
@@ -92,6 +97,7 @@ public class TenantDao {
                 tenants.add(t);
             }
         }catch(DataAccessException dex){
+            logger.warning(dex.getMessage());
             dex.printStackTrace();
         }
         return tenants;
@@ -102,6 +108,7 @@ public class TenantDao {
             DataAccess.delete("Tenant", c);
             return true;
         } catch (DataAccessException e) {
+            logger.warning(e.getMessage());
             e.printStackTrace();
             return false;
         }

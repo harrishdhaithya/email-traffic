@@ -13,15 +13,15 @@ function updateTenant(event) {
         alert('Enter All the required fields...');
         return;
     }
-    $.ajax({
-        url:'/mailtraffic/api/updatetenant',
-        type:'POST',
-        data: JSON.stringify({id,name,app_clientid,admin_email,admin_password}),
+    let param = new URLSearchParams({id,name,app_clientid,admin_email,admin_password});
+    $.ajax('/mailtraffic/api/tenant?'+param.toString(),{
+        ContentType:'application/json',
+        method:'PUT',
         processData: false,
-        contentType: false,
         cache: false
     }).then(resp=>alert(resp.message))
     .catch(err=>alert('Not able to update Tenant...'));
+    
 }
 
 function showpassword() {

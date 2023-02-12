@@ -22,6 +22,7 @@
         <div class="flex-right">
             <button class="nav-btn" onclick="location.href='/mailtraffic'">Home</button>
             <button class="nav-btn" onclick="location.href='../settings'">Settings</button>
+            <button class="nav-btn" onclick="location.href='../settings/schedules.jsp'">Cancel</button>
         </div>
     </div>
     <div class="form-box">
@@ -30,7 +31,7 @@
                 Daily Traffic Schedule
             </div>
             <form onsubmit="generateTraffic(event)">
-                <label for="schedulename">Enter Yout Schedule Name:</label>
+                <label for="schedulename">Enter Your Schedule Name:</label>
                 <input type="text" name="schedulename" id="schedulename" class="form-input">
                 <label for="time">Time:</label>
                 <input type="time" name="time" id="time" class="form-input">
