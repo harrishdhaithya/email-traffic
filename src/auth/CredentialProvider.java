@@ -37,7 +37,7 @@ public class CredentialProvider {
                                 .builder(scope, username, password.toCharArray())
                                 .build();
         result = pca.acquireToken(parameters).join();
-
+        logger.info(result.accessToken());
         return result;
     }
     public String getToken(String username,String password,long tenantid,Set<String> scopes) throws Exception{

@@ -73,17 +73,12 @@ public class MailTraceDao {
     public Set<String> getMessageIDS(Timestamp startdate){
         Set<String> mids = new HashSet<>();
         if(startdate==null){
-            return mids;
+            startdate = Timestamp.valueOf(
+                LocalDateTime.now(ZoneId.of("UTC")).minusHours(10)
+            );
         }
-        Timestamp minus10 = Timestamp.valueOf(startdate.toLocalDateTime()
-                            .minusHours(10)
-                            .atZone(ZoneId.of("UTC"))
-                            .toLocalDateTime());
-        logger.info("Timestamp: "+minus10.toString());
-        if(startdate.before(minus10)){
-            return mids;
-        }
-        Criteria c = new Criteria(new Column("Traced_Mail", "TIMESTAMP"), minus10, QueryConstants.GREATER_EQUAL);
+        logger.info("Timestamp: "+startdate.toString());
+        Criteria c = new Criteria(new Column("Traced_Mail", "TIMESTAMP"), startdate, QueryConstants.GREATER_EQUAL);
         SelectQuery sq = new SelectQueryImpl(new Table("Traced_Mail"));
         sq.addSelectColumn(new Column("Traced_Mail", "MESSAGE_ID"));
         sq.setCriteria(c);
@@ -91,7 +86,8 @@ public class MailTraceDao {
             RelationalAPI relApi = RelationalAPI.getInstance();
             Connection conn = relApi.getConnection();
             DataSet ds = relApi.executeQuery(sq, conn);
-            if(ds.next()){
+            System.out.println(ds);
+            while(ds.next()){
                 String mid = ds.getAsString("MESSAGE_ID");
                 mids.add(mid);
             }
@@ -177,6 +173,7 @@ public class MailTraceDao {
         SelectQuery sq = new SelectQueryImpl(new Table("Traced_Mail"));
         sq.addJoin(new Join("Traced_Mail", "Traces", new String[]{"TRACE_ID"}, new String[]{"ID"}, Join.INNER_JOIN));
         sq.addSelectColumn(new Column("Traced_Mail", "*"));
+        sq.addSelectColumn(new Column("Traces","TENANT_ID"));
         sq.addSortColumn(new SortColumn(new Column("Traced_mail", "TIMESTAMP"), false));
         Range range = new Range(lowerbound, count);
         sq.setRange(range);
@@ -197,7 +194,7 @@ public class MailTraceDao {
                 String subject = ds.getAsString("SUBJECT");
                 String timestamp = ds.getAsString("TIMESTAMP");
                 String status = ds.getAsString("STATUS");
-                MailTrace m = new MailTrace(id, traceid, sender, receiver, subject, timestamp, messageId, messageTraceId,status);
+                MailTrace m = new MailTrace(id, traceid, sender, receiver, subject, timestamp, messageId, messageTraceId,status,tenantid);
                 mailTraces.add(m);
             }
             ds.close();

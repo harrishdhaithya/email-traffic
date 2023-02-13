@@ -51,7 +51,7 @@ public class MailTrafficGenerator {
     private Timestamp startTimeStamp;
     private Timestamp endTimestamp;
     private static Logger logger = Logger.getLogger(MailTrafficGenerator.class.getName());
-    
+
     public MailTrafficGenerator(int count,String fileContent,long tenant_id){
         ConfigDao cdao = ConfigDao.getInstance();
         Config c = cdao.getConfig("poolsize");
@@ -93,6 +93,7 @@ public class MailTrafficGenerator {
     }
     private ICredUtil getCredUtil() throws Exception{
         if(dataSource.equals("csv")){
+            System.out.println("File Content: "+fileContent);
             return new CSVCredUtil(this.fileContent);
         }else if(dataSource.equals("sequence")){
             if(seqStart>seqEnd){
@@ -109,11 +110,14 @@ public class MailTrafficGenerator {
     private boolean sendEmail(ExchangeService eserv,ExchangeCredentials ecred, Mail mail){
         try {
             eserv.setUrl(new URI(serviceUrl));
+            logger.info("Inside sendEmail");
             eserv.setCredentials(ecred);
+            System.out.println("Completed Setting credentials...");
             eserv.setTraceEnabled(true);
             EmailMessage message = new EmailMessage(eserv);
             message.setSubject(mail.getSubject());
             message.setBody(MessageBody.getMessageBodyFromText(mail.getContent()));
+            logger.info("Message: "+message.toString());
             for(String toEmail: mail.getToList()){
                 message.getToRecipients().add(toEmail);
             }
@@ -136,7 +140,6 @@ public class MailTrafficGenerator {
         startTimeStamp = Timestamp.valueOf(LocalDateTime.now());
         List<Future<?>> futures = new ArrayList<>();
         ICredUtil credUtil = getCredUtil();
-        System.out.println(credUtil);
         for(int i=0;i<poolSize;i++){
             ExchangeService eserv = new ExchangeService();
             Runnable r = () -> {
@@ -166,16 +169,20 @@ public class MailTrafficGenerator {
                     Set<String> toList = new HashSet<>();
                     Random rand = new Random();
                     int toCount = rand.nextInt(10)+1;
+                    logger.info("Getting Recievers");
                     for(int j=0;j<toCount;j++){
-                    String reciever = credUtil.getRandomReciever();
-                    toList.add(reciever);
+                        String reciever = credUtil.getRandomReciever();
+                        toList.add(reciever);
                     }
+                    logger.info(toList.toString());
                     Faker faker = new Faker();
                     String subject = faker.lorem().paragraph();
                     String body = faker.lorem().paragraph();
                     String fromEmail = cred.getEmail();
                     Mail mail = new Mail(fromEmail, toList, subject, body);
+                    logger.info("Mail: "+mail);
                     boolean success = sendEmail(eserv,exc, mail);
+                    System.out.println("Mail Sent...");
                     mail.setStatus(success);
                     if(success){
                         incSuccessCount();

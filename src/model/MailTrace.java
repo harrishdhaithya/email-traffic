@@ -10,7 +10,8 @@ public class MailTrace {
     private String messageId;
     private String messageTraceId;
     private String status;
-    public MailTrace(String sender, String receiver, String subject, String timestamp,String messageId,String messageTraceId,String status) {
+    private long tenantid;
+    public MailTrace(String sender, String receiver, String subject, String timestamp,String messageId,String messageTraceId,String status,long tenantid) {
         this.sender = sender;
         this.receiver = receiver;
         this.subject = subject;
@@ -18,9 +19,10 @@ public class MailTrace {
         this.messageId = messageId;
         this.messageTraceId = messageTraceId;
         this.status = status;
+        this.tenantid = tenantid;
     }
     public MailTrace(long id, long traceid, String sender, String receiver, String subject,
-            String timestamp, String messageId, String messageTraceId,String status) {
+            String timestamp, String messageId, String messageTraceId,String status, long tenantid) {
         this.id = id;
         this.traceid = traceid;
         this.sender = sender;
@@ -30,9 +32,10 @@ public class MailTrace {
         this.messageId = messageId;
         this.messageTraceId = messageTraceId;
         this.status = status;
+        this.tenantid = tenantid;
     }
     public MailTrace( long traceid, String sender, String receiver, String subject, String timestamp,
-String messageId, String messageTraceId,String status) {
+String messageId, String messageTraceId,String status,long tenantid) {
         this.traceid = traceid;
         this.sender = sender;
         this.receiver = receiver;
@@ -41,6 +44,7 @@ String messageId, String messageTraceId,String status) {
         this.messageId = messageId;
         this.messageTraceId = messageTraceId;
         this.status = status;
+        this.tenantid = tenantid;
     }
     public long getId() {
         return id;
@@ -96,11 +100,16 @@ String messageId, String messageTraceId,String status) {
     public String getStatus(){
         return status;
     }
+    public long getTenantid() {
+        return tenantid;
+    }
+    public void setTenantid(long tenantid) {
+        this.tenantid = tenantid;
+    }
     @Override
     public String toString() {
         return "MailTrace [id=" + id + ", traceid=" + traceid + ", sender=" + sender + ", receiver=" + receiver
                 + ", subject=" + subject + ", timestamp=" + timestamp + ", messageId=" + messageId + ", messageTraceId="
-                + messageTraceId + "]";
+                + messageTraceId + ", status=" + status + ", tenantid=" + tenantid + "]";
     }
-    
 }

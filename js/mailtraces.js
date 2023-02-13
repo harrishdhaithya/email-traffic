@@ -19,7 +19,6 @@ function getTraces(event) {
 }
 
 
-
 function renderTable(respData){
     const datas = JSON.parse(respData);
     let tbody = document.getElementById('table-body');
@@ -75,9 +74,12 @@ function updatePageinationBtn(){
 }
 
 function loadTable(){
-    if(tenant==null){
+    if(!tenant){
         alert('Please select Tenant...');
+        return;
     }
+    count = document.getElementById('count')?.value?Number(document.getElementById('count')?.value):100;
+    console.log(count);
     let param = new URLSearchParams({lowerbound,count,tenant});
     $.get('/mailtraffic/api/mailtrace?'+param.toString())
     .then(resp=>{
@@ -97,7 +99,9 @@ function nextPage(event) {
         alert('Last Page Reached...');
         return;
     }
+    console.log(count);
     lowerbound+=count;
+    console.log(lowerbound);
     loadTable();
 }
 

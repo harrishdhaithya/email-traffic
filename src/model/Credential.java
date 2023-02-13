@@ -52,4 +52,10 @@ public class Credential {
     public String getStatus(){
         return status;
     }
+    @Override
+    public String toString() {
+        return "Credential [id=" + id + ", email=" + email + ", password=" + password + ", tenantId=" + tenantId
+                + ", status=" + status + "]";
+    }
+    
 }

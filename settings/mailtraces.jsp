@@ -44,6 +44,13 @@
                         <option value=<%=t.getId()%>><%=t.getName()%></option>
                     <%}%>
                 </select>
+                <label for="count" class="form-label">Entry Per Page: </label>
+                <select name="count" id="count" class="form-input">
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="150">150</option>
+                </select>
                 <input type="submit" name="submitd=" class="form-submit-btn">
             </form>
             <div class="table-container hidden" id="table-container">
@@ -53,7 +60,7 @@
                         <th>Receiver</th>
                         <th>Subject</th>
                         <th>Status</th>
-                        <th>Timestamp</th>
+                        <th>Received</th>
                     </thead>
                     <tbody id="table-body">
                     </tbody>

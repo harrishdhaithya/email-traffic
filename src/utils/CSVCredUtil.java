@@ -1,6 +1,7 @@
 package utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import model.Credential;
@@ -12,6 +13,7 @@ public class CSVCredUtil implements ICredUtil {
     // private String fileContent = null;
     public CSVCredUtil(String fileContent) {
         this.fileContent = fileContent;
+        System.out.println(this.fileContent);
     }
     // private String readFile(){
     //     try {
@@ -41,7 +43,9 @@ public class CSVCredUtil implements ICredUtil {
             credentials = new ArrayList<>();
             // String fileContent = getFileContent();
             String[] users = fileContent.split("\n");
-            for(String user: users){
+            for(int i=1;i<users.length;i++){
+                String user = users[i];
+                System.out.println(user);
                 String[] pair = user.split(",");
                 String email = pair[0].trim();
                 if(pair.length==2){
@@ -57,13 +61,13 @@ public class CSVCredUtil implements ICredUtil {
             recievers = new ArrayList<>();
             // String fileContent = getFileContent();
             String[] users = fileContent.split("\n");
-            for(String user:users){
+            for(int i=1;i<users.length;i++){
+                String user = users[i];
                 String[] pair = user.split(",");
                 String email = pair[0].trim();
-                if(pair.length==1||pair==null||pair[1].trim()==""){
-                    recievers.add(email);
-                }
+                recievers.add(email);
             }
+            System.out.println("Rec: "+recievers.toString());
         }
         return recievers;
     }
@@ -75,6 +79,9 @@ public class CSVCredUtil implements ICredUtil {
             return null;
         }
         int randInt = r.nextInt(creds.size());
+        Credential c = creds.get(randInt);
+        System.out.println("Email: "+c.getEmail());
+        System.out.println("Password: "+c.getPassword());
         return creds.get(randInt);
     }
     @Override
@@ -84,6 +91,7 @@ public class CSVCredUtil implements ICredUtil {
         if(receivers==null){
             return null;
         }
+        System.out.println(receivers.toString());
         int randInt = r.nextInt(receivers.size());
         return receivers.get(randInt);
     }

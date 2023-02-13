@@ -241,7 +241,7 @@ td{
 }
 
 .admin-grp:hover::after{
-    content: "Admin Credentials are only required to schedule automatic user deletion and user creation. If you dont want to use that feature you do not need to enter these details.";
+    content: "Admin Credentials are optional.";
     background-color: grey;
     padding: 3px;
     border-radius:5px;

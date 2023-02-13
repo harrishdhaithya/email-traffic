@@ -30,6 +30,7 @@ public class MessageTrace {
     private Timestamp startTime = null;
     private Timestamp endTime = null;
     private long traceid;
+    private long tenantid;
 
 
     private static String constructFilter(Timestamp startDate) throws Exception{
@@ -63,7 +64,7 @@ public class MessageTrace {
         try{
             String token = cred.getAdminToken(tenantid, scopes);
             String filter = constructFilter(startdate);
-            logger.info(filter);
+            logger.info("Filter: "+filter);
             String param = "$filter="+URLEncoder.encode(filter, "UTF-8")+"&$skiptoken="+URLEncoder.encode(Long.toString(skiptoken), "UTF-8");
             reqUrl = new URL(API_URL+"?"+param);
             HttpURLConnection conn = (HttpURLConnection)reqUrl.openConnection();
@@ -80,7 +81,6 @@ public class MessageTrace {
             JSONArray jarr = jobj.getJSONArray("value");
             for(int i=0;i<jarr.length();i++){
                 JSONObject trace = jarr.getJSONObject(i);
-                System.out.println(trace);
                 String sender = trace.getString("SenderAddress");
                 String receiver = trace.getString("RecipientAddress");
                 String subject = trace.get("Subject").toString();
@@ -98,14 +98,13 @@ public class MessageTrace {
                     logger.info("The messageId "+messageId+" Already Exist.");
                     continue;
                 }
-                MailTrace mt = new MailTrace(tenantid, sender, receiver, subject, timestamp,messageId,messageTraceId,status);
+                MailTrace mt = new MailTrace(traceid, sender, receiver, subject, timestamp,messageId,messageTraceId,status,tenantid);
                 traces.add(mt);
                 mailTraceCount++;
             }
             mtdao.addMessageTraces(traces, tenantid);
             if(jobj.has("odata.nextLink")){
                 String nextLink = jobj.getString("odata.nextLink");
-                System.out.println(nextLink);
                 int index = nextLink.indexOf("$skiptoken");
                 String nextToken = nextLink.substring(index+11);
                 logger.info("Next Link: "+nextLink);
@@ -138,10 +137,9 @@ public class MessageTrace {
     }
     
     public void updateTraces(long tenantid) throws Exception{
+        this.tenantid = tenantid;
         MailTraceDao mtdao = MailTraceDao.getInstance();
         Timestamp startdate = mtdao.getRecentTrace(tenantid);
-        logger.info("Start Date: "+startdate);
-        // long traceid = mtdao.addTrace(tenantid);
         boolean cont = true;
         Set<String> mids = mtdao.getMessageIDS(startdate);
         while(cont){
@@ -160,5 +158,11 @@ public class MessageTrace {
             jobj.put("endtime",endTime);
         }
         return jobj;
+    }
+    public long getTenantid(){
+        return this.tenantid;
+    }
+    public boolean isCompleted(){
+        return this.status=="COMPLETED";
     }
 }
