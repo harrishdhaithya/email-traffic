@@ -10,10 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import com.adventnet.db.api.RelationalAPI;
 import com.adventnet.ds.query.Column;
 import com.adventnet.ds.query.Criteria;
@@ -33,7 +31,6 @@ import com.adventnet.persistence.DataObject;
 import com.adventnet.persistence.Row;
 import com.adventnet.persistence.WritableDataObject;
 import model.MailTrace;
-import model.TraceStatus;
 
 public class MailTraceDao {
     private static Logger logger = Logger.getLogger(MailTraceDao.class.getName());
@@ -84,7 +81,7 @@ public class MailTraceDao {
                 LocalDateTime.now(ZoneId.of("UTC")).minusHours(10)
             );
         }
-        Criteria c = new Criteria(new Column("Traced_Mail", "RECENT_TRACE"), startdate, QueryConstants.GREATER_EQUAL);
+        Criteria c = new Criteria(new Column("Traced_Mail", "TIMESTAMP"), startdate, QueryConstants.GREATER_EQUAL);
         SelectQuery sq = new SelectQueryImpl(new Table("Traced_Mail"));
         sq.addSelectColumn(new Column("Traced_Mail", "MESSAGE_ID"));
         sq.setCriteria(c);
@@ -104,23 +101,19 @@ public class MailTraceDao {
         return mids;
     }
 
-    public void addRow(long traceid,MailTrace m,DataObject dobj) throws Exception{
-        Row row = new Row("Traced_Mail");
-        row.set("TRACE_ID", traceid);
-        row.set("MESSAGE_ID",m.getMessageId());
-        row.set("MESSAGE_TRACE_ID", m.getMessageTraceId());
-        row.set("SENDER", m.getSender());
-        row.set("RECEIVER", m.getReceiver());
-        row.set("SUBJECT", m.getSubject());
-        row.set("TIMESTAMP",Timestamp.valueOf(LocalDateTime.parse(m.getTimestamp())));
-        row.set("STATUS",m.getStatus());
-        dobj.addRow(row);
-    }
+    // public void addRow(long traceid,MailTrace m,DataObject dobj) throws Exception{
+    //     Row row = new Row("Traced_Mail");
+    //     row.set("TRACE_ID", traceid);
+    //     row.set("MESSAGE_ID",m.getMessageId());
+    //     row.set("MESSAGE_TRACE_ID", m.getMessageTraceId());
+    //     row.set("SENDER", m.getSender());
+    //     row.set("RECEIVER", m.getReceiver());
+    //     row.set("SUBJECT", m.getSubject());
+    //     row.set("TIMESTAMP",Timestamp.valueOf(LocalDateTime.parse(m.getTimestamp())));
+    //     row.set("STATUS",m.getStatus());
+    //     dobj.addRow(row);
+    // }
 
-    public void saveDobj(DataObject dobj) throws Exception{
-        System.out.println(dobj);
-        DataAccess.add(dobj);
-    }
 
     public boolean addTrace(long traceid,MailTrace m){
         DataObject dobj = new WritableDataObject();
@@ -196,7 +189,7 @@ public class MailTraceDao {
                 String sender = ds.getAsString("SENDER");
                 String receiver = ds.getAsString("RECEIVER");
                 String subject = ds.getAsString("SUBJECT");
-                String timestamp = ds.getAsString("TIMESTAMP");
+                String timestamp = ds.getAsTimestamp("TIMESTAMP").toLocalDateTime().plusHours(5).plusMinutes(30).toString();
                 String status = ds.getAsString("STATUS");
                 MailTrace m = new MailTrace(id, traceid, sender, receiver, subject, timestamp, messageId, messageTraceId,status,tenantid);
                 mailTraces.add(m);
@@ -255,17 +248,21 @@ public class MailTraceDao {
     public JSONArray getTraceStatusByTenant(long tenantid){
         JSONArray traces = new JSONArray();
         Criteria c = new Criteria(new Column("Traces", "TENANT_ID"), tenantid, QueryConstants.EQUAL);
+        SelectQuery sq = new SelectQueryImpl(new Table("Traces"));
+        sq.setCriteria(c);
+        sq.addSortColumn(new SortColumn(new Column("Traces", "TIMESTAMP"), false));
+        sq.addSelectColumn(new Column("Traces", "*"));
         TenantDao tdao = TenantDao.getInstance();
         try {
-            DataObject dobj = DataAccess.get("Traces", c);
+            DataObject dobj = DataAccess.get(sq);
             Iterator itr = dobj.getRows("Traces");
             while (itr.hasNext()) {
                 JSONObject jobj = new JSONObject();
                 Row row = (Row)itr.next();
                 jobj.put("id", row.getLong("ID"));
-                jobj.put("tracestart", row.getTimestamp("TIMESTAMP").toString());
-                jobj.put("recentTrace", row.getTimestamp("RECENT_TRACE").toString());
-                jobj.put("tenantid", tdao.getTenant(row.getLong("TENANT_ID")).getName());
+                jobj.put("tracestart", row.getTimestamp("TIMESTAMP").toLocalDateTime().plusHours(5).plusMinutes(30).toString());
+                jobj.put("recentTrace", row.getTimestamp("RECENT_TRACE").toLocalDateTime().plusHours(5).plusMinutes(30).toString());
+                jobj.put("tenant", tdao.getTenant(row.getLong("TENANT_ID")).getName());
                 jobj.put("status", row.getString("STATUS"));
                 traces.put(jobj);
             } 
@@ -278,15 +275,18 @@ public class MailTraceDao {
     public JSONArray getAllTraces(){
         JSONArray traces = new JSONArray();
         try{
-            DataObject dobj = DataAccess.get("Traces", (Criteria)null);
+            SelectQuery sq = new SelectQueryImpl(new Table("Traces"));
+            sq.addSortColumn(new SortColumn(new Column("Traces","TIMESTAMP"), false));
+            sq.addSelectColumn(new Column("Traces","*"));
+            DataObject dobj = DataAccess.get(sq);
             Iterator itr = dobj.getRows("Traces");
             TenantDao tdao = TenantDao.getInstance();
             while (itr.hasNext()) {
                 JSONObject jobj = new JSONObject();
                 Row row = (Row)itr.next();
                 jobj.put("id", row.getLong("ID"));
-                jobj.put("tracestart", row.getTimestamp("TIMESTAMP").toString());
-                jobj.put("recentTrace", row.getTimestamp("RECENT_TRACE")).toString();
+                jobj.put("tracestart", row.getTimestamp("TIMESTAMP").toLocalDateTime().plusHours(5).plusMinutes(30).toString());
+                jobj.put("recentTrace", row.getTimestamp("RECENT_TRACE").toLocalDateTime().plusHours(5).plusMinutes(30).toString());
                 jobj.put("tenant", tdao.getTenant(row.getLong("TENANT_ID")).getName());
                 jobj.put("status", row.getString("STATUS"));
                 traces.put(jobj);

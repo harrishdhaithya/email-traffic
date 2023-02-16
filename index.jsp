@@ -23,7 +23,7 @@
         <img src="img/logo.png" style="height: 5rem;margin-left: 5px;">
         <div class="nav-title">EMail Traffic Generator</div>
         <div class="flex-right">
-            <button class="nav-btn" onclick="location.href='settings/traffichistory.jsp'" >History</button>
+            <button class="nav-btn" onclick="location.href='settings/traffichistory.jsp'" >Traffic Generation History</button>
             <button class="nav-btn" onclick="location.href='settings'" >Settings</button>
             <%if(mtg!=null){%>
                 <button class="nav-btn" onclick="location.href='mailstatus.html'" >View Status</button>
@@ -34,6 +34,9 @@
     <%
         TenantDao tdao = TenantDao.getInstance();
         List<Tenant> tenants = tdao.getAllTenants();
+        if(tenants.size()==0){
+            response.sendRedirect("/mailtraffic/settings/tenconf.jsp");
+        }
     %>
     <div class="container">
         <div class="form-box">
@@ -86,7 +89,9 @@
                     </div>
                     <label for="count" class="form-label">Enter Number of Mails to be sent:</label>
                     <input type="number" name="count" id="count" class="form-input" placeholder="Enter Number of Mails...">
-                    <input type="submit" class="form-submit-btn">
+                    <div class="flex-center">
+                        <input type="submit" class="form-submit-btn">
+                    </div>
                 </div>
             </form>
         </div>

@@ -95,7 +95,6 @@ public class MailTrafficGenerator {
     }
     private ICredUtil getCredUtil() throws Exception{
         if(dataSource.equals("csv")){
-            System.out.println("File Content: "+fileContent);
             return new CSVCredUtil(this.fileContent);
         }else if(dataSource.equals("sequence")){
             if(seqStart>seqEnd){
@@ -114,7 +113,7 @@ public class MailTrafficGenerator {
             eserv.setUrl(new URI(serviceUrl));
             logger.info("Inside sendEmail");
             eserv.setCredentials(ecred);
-            System.out.println("Completed Setting credentials...");
+            logger.info("Completed Setting credentials...");
             eserv.setTraceEnabled(true);
             EmailMessage message = new EmailMessage(eserv);
             message.setSubject(mail.getSubject());

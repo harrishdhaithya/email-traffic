@@ -1,3 +1,4 @@
+<%@ page import="model.Tenant,dao.TenantDao,java.util.List"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,13 +12,20 @@
     <script src="../js/mailtracestatus.js"></script>
 </head>
 <body>
+    <%
+        TenantDao tdao = TenantDao.getInstance();
+        List<Tenant> tenants = tdao.getAllTenants();
+        if(tenants.size()==0){
+            response.sendRedirect("/mailtraffic/settings/tenconf.jsp");
+        }
+    %>
     <div class="nav-bar flex" style="align-items: center;">
         <img src="../img/logo.png" style="height: 5rem;margin-left: 5px;">
         <div class="nav-title">EMail Traffic Generator</div>
         <div class="flex-right">
             <button class="nav-btn" onclick="location.href='/mailtraffic'" >Home</button>
             <button class="nav-btn" onclick="location.href='/mailtraffic/settings'">Settings</button>
-            <button class="nav-btn" onclick="location.href='collecttrace.jsp'" >Back</button>
+            <button class="nav-btn" onclick="location.href='mailtraces.jsp'" >Back</button>
         </div>
     </div>
     <div class="container">
@@ -26,8 +34,10 @@
             <hr>
             <div id="mailcount"></div>
             <div id="status"></div>
+            <div id="tenant"></div>
             <div id="starttime"></div>
             <div id="endtime"></div>
+            <div id="error"></div>
         </div>
         <div style="text-align: center;" id="loading">
             <img src="../img/loading.gif" style="height: 50px;width: 50px;border-radius: 50%;">

@@ -23,11 +23,14 @@
     <%
         TenantDao tdao = TenantDao.getInstance();
         List<Tenant> tenants = tdao.getAllTenants();
+        if(tenants.size()==0){
+            response.sendRedirect("/mailtraffic/settings/tenconf.jsp");
+        }
     %>
     <div class="form-box">
         <div class="container-wide">
             <div class="header-box">
-                Collect Traces
+                Collect Message Trace
             </div>
             <form onsubmit="collectTraces(event)">
                 <label for="tenant" class="form-label">Select Tenant  </label>
@@ -37,7 +40,9 @@
                         <option value=<%=t.getId()%>><%=t.getName()%></option>
                     <%}%>
                 </select>
-                <input type="submit" name="submitd=" class="form-submit-btn">
+                <div class="flex-center">
+                    <input type="submit" name="submit" class="form-submit-btn">
+                </div>
             </form>
         </div>
     </div>

@@ -70,7 +70,6 @@ public class CredentialDao {
         countCol.setColumnAlias("COUNT");
         sq.addSelectColumn(countCol);
         sq.setCriteria(c.and(pwdC));
-        System.out.println(sq.toString());
         try {
             RelationalAPI relApi = RelationalAPI.getInstance();
             Connection conn = relApi.getConnection();
@@ -114,12 +113,13 @@ public class CredentialDao {
     public List<Credential> getCredentials(long tenantid,int lowerBound,int count){
         List<Credential> creds = new LinkedList<>();
         Criteria c = new Criteria(new Column("Credentials", "PASSWORD"), null, QueryConstants.NOT_EQUAL);
+        Criteria c2 = new Criteria(new Column("Credentials", "TENANT_ID"), tenantid, QueryConstants.EQUAL);
         SelectQuery sq = new SelectQueryImpl(new Table("Credentials"));
         sq.addSelectColumn(new Column("Credentials", "*"));
         sq.addSortColumn(new SortColumn(new Column("Credentials","ID"), true));
         Range range = new Range(lowerBound, count);
         sq.setRange(range);
-        sq.setCriteria(c);
+        sq.setCriteria(c.and(c2));
         try {
             DataObject dobj = DataAccess.get(sq);
             Iterator itr = dobj.getRows("Credentials");

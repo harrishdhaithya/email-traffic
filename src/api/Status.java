@@ -22,7 +22,6 @@ public class Status extends HttpServlet {
             resp.getWriter().println(jobj.toString());
             return;
         }
-        System.out.println(gen.getStatus());
         resp.setStatus(200);
         resp.setContentType("application/json");
         resp.getWriter().println(gen.getStatus());

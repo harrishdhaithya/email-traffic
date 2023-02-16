@@ -15,6 +15,10 @@
         ScheduleDao sdao = ScheduleDao.getInstance();
         List<Schedule> schedules = sdao.getSchedules();
         TenantDao tdao = TenantDao.getInstance();
+        List<Tenant> tenants = tdao.getAllTenants();
+        if(tenants.size()==0){
+            response.sendRedirect("/mailtraffic/settings/tenconf.jsp");
+        }
     %>
     <div class="nav-bar flex" style="align-items: center;">
         <img src="../img/logo.png" style="height: 5rem;margin-left: 5px;">

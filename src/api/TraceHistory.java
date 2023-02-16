@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import dao.MailTraceDao;
-import dao.TenantDao;
 
 public class TraceHistory extends HttpServlet {
     private static Logger logger = Logger.getLogger(Logger.class.getName());

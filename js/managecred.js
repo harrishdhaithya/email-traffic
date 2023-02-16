@@ -21,6 +21,13 @@ function renderTable(user){
     let tbody = document.getElementById('table-body');
     document.getElementById('table-container').classList.remove('hidden');
     tbody.innerHTML = "";
+    if(user.length==0){
+        document.getElementById('nodata').classList.remove('hidden');
+        document.getElementById('table').classList.add('hidden');
+        return;
+    }
+    document.getElementById('nodata').classList.add('hidden');
+    document.getElementById('table').classList.remove('hidden');
     user.forEach(user=>{
         let tr = document.createElement('tr');
         let email = document.createElement('td');
@@ -53,27 +60,36 @@ function renderTable(user){
 }
 
 function updatePageinationBtn(){
-    document.getElementById('pagenum').textContent = page+"/"+totalpages;
-    if(page==1){
-        document.getElementById('prevbtn').classList.add('hidden');
-        document.getElementById('firstpage').classList.add('hidden');
-        document.getElementById('lastpage').classList.remove('hidden');
-        document.getElementById('nextbtn').classList.remove('hidden');
-    }
-    if(page==totalpages){
-        document.getElementById('nextbtn').classList.add('hidden');
-        document.getElementById('lastpage').classList.add('hidden');
-        if(page!=1){
-            document.getElementById('firstpage').classList.remove('hidden');
-            document.getElementById('prevbtn').classList.remove('hidden');
+    const pagenum = document.getElementsByClassName('pagenum')
+    const prevbtn = document.getElementsByClassName('prevbtn');
+    const firstpage = document.getElementsByClassName('firstpage');
+    const lastpage = document.getElementsByClassName('lastpage');
+    const nextbtn = document.getElementsByClassName('nextbtn');
+    for(let i=0;i<prevbtn.length;i++){
+        pagenum[i].textContent = page+"/"+totalpages;
+        if(page==1){
+            prevbtn[i].classList.add('hidden');
+            firstpage[i].classList.add('hidden');
+            if(page!=totalpages){
+                lastpage[i].classList.remove('hidden');
+                nextbtn[i].classList.remove('hidden');
+            }else{
+                lastpage[i].classList.add('hidden');
+                nextbtn[i].classList.add('hidden');
+            }
+        }else if(page==totalpages){
+            nextbtn[i].classList.add('hidden');
+            lastpage[i].classList.add('hidden');
+            firstpage[i].classList.remove('hidden');
+            prevbtn[i].classList.remove('hidden');
+        }else if(page!=1&&page!=totalpages){
+            nextbtn[i].classList.remove('hidden');
+            firstpage[i].classList.remove('hidden');
+            prevbtn[i].classList.remove('hidden');
+            lastpage[i].classList.remove('hidden');
         }
     }
-    if(page!=1&&page!=totalpages){
-        document.getElementById('prevbtn').classList.remove('hidden');
-        document.getElementById('nextbtn').classList.remove('hidden');
-        document.getElementById('firstpage').classList.remove('hidden');
-        document.getElementById('lastpage').classList.remove('hidden');
-    }
+    
 }
 
 function deleteUser(event) {
@@ -94,17 +110,28 @@ function loadTable(){
         alert('Please select Tenant...');
     }
     let param = new URLSearchParams({lowerbound,count,tenant});
+    const loading = document.getElementById('loading');
+    loading.classList.remove('hidden');
     $.get('/mailtraffic/api/cred?'+param.toString())
     .then(resp=>{
+        
+        loading.classList.add('hidden');
         totalpages = Math.ceil(Number(resp.totalcount)/count);
         renderTable(resp.data);
         page=Math.ceil(resp.rangestart/100);
         updatePageinationBtn();
-        document.getElementById('pageinfo').textContent = "Range: "+resp.rangestart+" to "+resp.rangeend;
-        document.getElementById('total-data').textContent ="Total Count: "+ resp.totalcount;
+        const pageinfo = document.getElementsByClassName('pageinfo');
+        const totalDataCol = document.getElementsByClassName('total-data');
+        for(let i=0;i<pageinfo.length;i++){
+            pageinfo[i].textContent = "Range: "+resp.rangestart+" to "+resp.rangeend;
+            totalDataCol[i].textContent ="Total Count: "+ resp.totalcount;
+        }
         totalData = resp.totalcount;
     })
-    .catch(err=>console.log(err.responseText))
+    .catch(err=>{
+        loading.classList.add('hidden');
+        console.log(err.responseText)
+    })
 }
 
 function nextPage(event) {

@@ -18,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import auth.CredentialProvider;
 import dao.MailTraceDao;
+import dao.TenantDao;
 import model.MailTrace;
 
 public class MessageTrace {
@@ -31,7 +32,7 @@ public class MessageTrace {
     private Timestamp endTime = null;
     private long traceid;
     private long tenantid;
-
+    private String errorMessage = null;
     public MessageTrace(long tenantid){
         this.tenantid = tenantid;
     }
@@ -118,6 +119,7 @@ public class MessageTrace {
         }catch(Exception ex){
             logger.warning(ex.getMessage());
             ex.printStackTrace();
+            errorMessage = ex.getMessage();
             status="FAILED";
             mtdao.updateTraceStatus(traceid, status);
             throw new Exception("Something went wrong...");
@@ -155,12 +157,17 @@ public class MessageTrace {
     }
 
     public JSONObject getStatus(){
+        TenantDao tdao = TenantDao.getInstance();
         JSONObject jobj = new JSONObject();
         jobj.put( "mailcount", mailTraceCount);
         jobj.put("status", status);
         jobj.put("starttime",startTime);
+        jobj.put("tenant", tdao.getTenant(tenantid).getName());
         if(status.equals("COMPLETED")||status.equals("FAILED")){
             jobj.put("endtime",endTime);
+        }
+        if(status.equals("FAILED")){
+            jobj.put("stacktrace", errorMessage);
         }
         return jobj;
     }

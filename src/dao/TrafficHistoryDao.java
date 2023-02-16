@@ -8,6 +8,10 @@ import java.util.logging.Logger;
 import com.adventnet.ds.query.Column;
 import com.adventnet.ds.query.Criteria;
 import com.adventnet.ds.query.QueryConstants;
+import com.adventnet.ds.query.SelectQuery;
+import com.adventnet.ds.query.SelectQueryImpl;
+import com.adventnet.ds.query.SortColumn;
+import com.adventnet.ds.query.Table;
 import com.adventnet.persistence.DataAccess;
 import com.adventnet.persistence.DataAccessException;
 import com.adventnet.persistence.DataObject;
@@ -46,8 +50,11 @@ public class TrafficHistoryDao {
     
     public List<TrafficHistory> getAllTrafficHistory(){
         List<TrafficHistory> hist = new LinkedList<>();
+        SelectQuery sq = new SelectQueryImpl(new Table("Traffic_History"));
+        sq.addSortColumn(new SortColumn(new Column("Traffic_History", "START_TIME"), false));
+        sq.addSelectColumn(new Column("Traffic_History", "*"));
         try {
-            DataObject dobj = DataAccess.get("Traffic_History", (Criteria)null);
+            DataObject dobj = DataAccess.get(sq);
             Iterator itr = dobj.getRows("Traffic_History");
             while (itr.hasNext()) {
                 Row row = (Row)itr.next();
@@ -71,8 +78,12 @@ public class TrafficHistoryDao {
     public List<TrafficHistory> getTrafficHistories(long tenantid){
         List<TrafficHistory> hist = new LinkedList<>();
         Criteria c = new Criteria(new Column("Traffic_History","TENANT_ID"), tenantid, QueryConstants.EQUAL);
+        SelectQuery sq = new SelectQueryImpl(new Table("Traffic_History"));
+        sq.setCriteria(c);
+        sq.addSortColumn(new SortColumn(new Column("Traffic_History", "START_TIME"), false));
+        sq.addSelectColumn(new Column("Traffic_History", "*"));
         try{
-            DataObject dobj = DataAccess.get("Traffic_History", c);
+            DataObject dobj = DataAccess.get(sq);
             Iterator itr = dobj.getRows("Traffic_History");
             while (itr.hasNext()) {
                 Row row = (Row)itr.next();

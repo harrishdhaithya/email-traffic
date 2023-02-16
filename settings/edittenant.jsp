@@ -45,7 +45,9 @@
                 <label for="admin_email" class="form-label">Enter Admin Password:<i class="fa fa-info-circle admin-grp" aria-hidden="true"></i> </label>
                 <input type="password" name="admin_password" id="admin_password" class="form-input" placeholder="Admin Password" value=<%=t.getAdminPassword()%>>
                 <input type="checkbox" onclick="showpassword()">Show Password
-                <input type="submit" name="" id="" class="form-submit-btn">
+                <div class="flex-center">
+                    <input type="submit" name="" id="" class="form-submit-btn">
+                </div>
             </form>
         </div>
     </div>

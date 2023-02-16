@@ -15,6 +15,9 @@
     <%
         TenantDao tdao = TenantDao.getInstance();
         List<Tenant> tenants = tdao.getAllTenants();
+        if(tenants.size()==0){
+            response.sendRedirect("/mailtraffic/settings/tenconf.jsp");
+        }
     %>
     <div class="nav-bar flex" style="align-items: center;">
         <img src="../img/logo.png" style="height: 5rem;margin-left: 5px;">
@@ -44,7 +47,9 @@
                 </select>
                 <label for="count">Enter Number of Mails:</label>
                 <input type="number" name="count" id="count" class="form-input" onchange="observeCount()">
-                <input type="submit" class="form-submit-btn" value="Schedule">
+                <div class="flex-center">
+                    <input type="submit" class="form-submit-btn" value="Schedule">
+                </div>
             </form>
         </div>
     </div>

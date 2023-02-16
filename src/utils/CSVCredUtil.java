@@ -11,7 +11,6 @@ public class CSVCredUtil implements ICredUtil {
     private List<Credential> credentials = null;
     public CSVCredUtil(String fileContent) {
         this.fileContent = fileContent;
-        System.out.println(this.fileContent);
     }
     private synchronized List<Credential> getCredentials(){
         if(credentials==null){
@@ -19,7 +18,6 @@ public class CSVCredUtil implements ICredUtil {
             String[] users = fileContent.split("\n");
             for(int i=1;i<users.length;i++){
                 String user = users[i];
-                System.out.println(user);
                 String[] pair = user.split(",");
                 String email = pair[0].trim();
                 if(pair.length==2){
@@ -61,7 +59,6 @@ public class CSVCredUtil implements ICredUtil {
         if(receivers==null){
             return null;
         }
-        System.out.println(receivers.toString());
         int randInt = r.nextInt(receivers.size());
         return receivers.get(randInt);
     }

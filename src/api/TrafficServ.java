@@ -59,7 +59,6 @@ public class TrafficServ extends HttpServlet {
                 gen = new MailTrafficGenerator(count, sb.toString(),Long.parseLong(tenant_id));
                 
             }else if(datasource.equals("sequence")){
-                System.out.println(datasource);
                 String prefix = req.getParameter("prefix");
                 String suffix = req.getParameter("suffix");
                 String tenantid = req.getParameter("tenant");
@@ -105,7 +104,6 @@ public class TrafficServ extends HttpServlet {
             servex.printStackTrace();
             logger.warning(servex.getStackTrace().toString());
             resp.setStatus(400);
-            // jobj.put("error", servex.getMessage());
             out.println(servex.getMessage());
             return;
         }

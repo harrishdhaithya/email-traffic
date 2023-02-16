@@ -23,11 +23,14 @@
         TenantDao tdao = TenantDao.getInstance();
         List<Tenant> tenants = tdao.getAllTenants();
         CredentialDao cdao = CredentialDao.getInstance();
+        if(tenants.size()==0){
+            response.sendRedirect("/mailtraffic/settings/tenconf.jsp");
+        }
     %>
     <div class="form-box">
         <div class="container-wide">
             <div class="header-box">
-                Manage Credentials
+                Update Mailbox Credentials
             </div>
             <form onsubmit="getCredentials(event)">
                 <label for="tenant" class="form-label">Select Tenant  </label>
@@ -37,31 +40,50 @@
                         <option value=<%=t.getId()%>><%=t.getName()%></option>
                     <%}%>
                 </select>
-                <input type="submit" name="submitd=" class="form-submit-btn">
+                <div class="flex-center">
+                    <input type="submit" name="submit" class="form-submit-btn">
+                </div>
             </form>
+            <hr>
+            <div class="hidden" style="text-align: center;margin-top: 8px;" id="loading">
+                <img src="../img/loading.gif" style="height: 50px;width: 50px;border-radius: 50%;">
+            </div>
             <div class="table-container hidden" id="table-container">
-                <table>
-                    <thead>
-                        <th>Email ID</th>
-                        <!-- <th>Password</th> -->
-                        <th>Status</th>
-                        <th>Update</th>
-                        <th>Delete</th>
-                    </thead>
-                    <tbody id="table-body">
-                    </tbody>
-                </table>
-                <div id="total-data"></div>
-                <div id="pageinfo"></div>
-                <div class="pagination-container">
-                    <div class="pagination">
-                        <button onclick="firstPage(event)" id="firstpage">&laquo;&laquo;</button>
-                        <button onclick="prevPage(event)" id="prevbtn">&laquo;</button>
-                        <div id="pagenum">1</div>
-                        <button onclick="nextPage(event)" id="nextbtn">&raquo;</button>
-                        <button onclick="lastPage(event)" id="lastpage">&raquo;&raquo;</button>
+                <div class="table-container-inner" id="table">
+                    <div class="total-data"></div>
+                    <div class="pageinfo"></div>
+                    <div class="pagination-container">
+                        <div class="pagination">
+                            <button onclick="firstPage(event)" class="firstpage hidden">&laquo;&laquo;</button>
+                            <button onclick="prevPage(event)" class="prevbtn hidden">&laquo;</button>
+                            <div class="pagenum">1</div>
+                            <button onclick="nextPage(event)" class="nextbtn hidden">&raquo;</button>
+                            <button onclick="lastPage(event)" class="lastpage hidden">&raquo;&raquo;</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <th>Email ID</th>
+                            <th>Status</th>
+                            <th>Update</th>
+                            <th>Delete</th>
+                        </thead>
+                        <tbody id="table-body">
+                        </tbody>
+                    </table>
+                    <div class="total-data"></div>
+                    <div class="pageinfo"></div>
+                    <div class="pagination-container">
+                        <div class="pagination">
+                            <button onclick="firstPage(event)" class="firstpage hidden">&laquo;&laquo;</button>
+                            <button onclick="prevPage(event)" class="prevbtn hidden">&laquo;</button>
+                            <div class="pagenum">1</div>
+                            <button onclick="nextPage(event)" class="nextbtn hidden">&raquo;</button>
+                            <button onclick="lastPage(event)" class="lastpage hidden">&raquo;&raquo;</button>
+                        </div>
                     </div>
                 </div>
+                <div class="fs-2 hidden" id="nodata">No Data Found</div>
             </div>
         </div>
         

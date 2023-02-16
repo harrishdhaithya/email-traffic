@@ -13,6 +13,8 @@ function generateTraffic(event) {
         alert('All the fields are required...');
         return;
     }
+    const loading = document.getElementById('loading');
+    loading.classList.remove('hidden');
     let params = new URLSearchParams({time,schedulename,tenantid,count});
     $.ajax('/mailtraffic/api/schedule',{
         method:'POST',
@@ -22,10 +24,14 @@ function generateTraffic(event) {
         cache: false
     })
     .then(resp=>{
+        loading.classList.remove('hidden');
         alert('Email Traffic Sheduled Successfully...')
         location.href = '/mailtraffic/settings/schedules.jsp';
     })
-    .catch(err=>alert(err.responseText));
+    .catch(err=>{
+        loading.classList.remove('hidden');
+        alert(err.responseText)
+    });
 }
 
 function observeCount(){

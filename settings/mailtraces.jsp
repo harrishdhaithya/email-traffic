@@ -19,23 +19,26 @@
         <img alt="logo Image" src="../img/logo.png" style="height: 5rem;margin-left: 5px;">
         <div class="nav-title">EMail Traffic Generator</div>
         <div class="flex-right">
-            <button class="nav-btn" onclick="location.href='tracehistory.jsp'">Trace History</button>
-            <button class="nav-btn" onclick="location.href='/mailtraffic'">Home</button>
-            <button class="nav-btn" onclick="location.href='../settings'">Back</button>
-            <button class="nav-btn" onclick="location.href='collecttrace.jsp'">Start Trace</button>
+            <button class="nav-btn" onclick="location.href='tracehistory.jsp'">History</button>
+            <button class="nav-btn" onclick="location.href='collecttrace.jsp'">Collect Message Trace</button>
             <%if(mt!=null){%>
                 <button class="nav-btn" onclick="location.href='mailtracestatus.jsp'">Current Trace Status</button>
             <%}%>
+            <button class="nav-btn" onclick="location.href='/mailtraffic'">Home</button>
+            <button class="nav-btn" onclick="location.href='../settings'">Back</button>
         </div>
     </div>
     <%
         TenantDao tdao = TenantDao.getInstance();
         List<Tenant> tenants = tdao.getAllTenants();
+        if(tenants.size()==0){
+            response.sendRedirect("/mailtraffic/settings/tenconf.jsp");
+        }
     %>
     <div class="form-box">
         <div class="container-wide" style="width: 980px;">
             <div class="header-box">
-                Mail Traces
+                Message Trace
             </div>
             <form onsubmit="getTraces(event)">
                 <label for="tenant" class="form-label">Select Tenant  </label>
@@ -52,31 +55,51 @@
                     <option value="100">100</option>
                     <option value="150">150</option>
                 </select>
-                <input type="submit" name="submit" class="form-submit-btn" value="Get Traces">
+                <div class="flex-center">
+                    <input type="submit" name="submit" class="form-submit-btn" value="Get data">
+                </div>
             </form>
+            <hr>
+            <div class="hidden" style="text-align: center;margin-top: 8px;" id="loading">
+                <img src="../img/loading.gif" style="height: 50px;width: 50px;border-radius: 50%;">
+            </div>
             <div class="table-container hidden" id="table-container">
-                <table style="table-layout: fixed; width: 100%;overflow-wrap: break-word;">
-                    <thead>
-                        <th>Sender</th>
-                        <th>Receiver</th>
-                        <th>Subject</th>
-                        <th>Status</th>
-                        <th>Received</th>
-                    </thead>
-                    <tbody id="table-body">
-                    </tbody>
-                </table>
-                <div id="total-data"></div>
-                <div id="pageinfo"></div>
-                <div class="pagination-container">
-                    <div class="pagination">
-                        <button onclick="firstPage(event)" id="firstpage">&laquo;&laquo;</button>
-                        <button onclick="prevPage(event)" id="prevbtn">&laquo;</button>
-                        <div id="pagenum">1</div>
-                        <button onclick="nextPage(event)" id="nextbtn">&raquo;</button>
-                        <button onclick="lastPage(event)" id="lastpage">&raquo;&raquo;</button>
+                <div class="table-container-inner" id="table">
+                    <div class="total-data"></div>
+                    <div class="pageinfo"></div>
+                    <div class="pagination-container">
+                        <div class="pagination">
+                            <button onclick="firstPage(event)" class="firstpage">&laquo;&laquo;</button>
+                            <button onclick="prevPage(event)" class="prevbtn">&laquo;</button>
+                            <div class="pagenum">1</div>
+                            <button onclick="nextPage(event)" class="nextbtn">&raquo;</button>
+                            <button onclick="lastPage(event)" class="lastpage">&raquo;&raquo;</button>
+                        </div>
+                    </div>
+                    <table style="table-layout: fixed; width: 100%;overflow-wrap: break-word;">
+                        <thead>
+                            <th>Sender</th>
+                            <th>Receiver</th>
+                            <th>Subject</th>
+                            <th>Status</th>
+                            <th>Received</th>
+                        </thead>
+                        <tbody id="table-body">
+                        </tbody>
+                    </table>
+                    <div class="total-data"></div>
+                    <div class="pageinfo"></div>
+                    <div class="pagination-container">
+                        <div class="pagination">
+                            <button onclick="firstPage(event)" class="firstpage">&laquo;&laquo;</button>
+                            <button onclick="prevPage(event)" class="prevbtn">&laquo;</button>
+                            <div class="pagenum">1</div>
+                            <button onclick="nextPage(event)" class="nextbtn">&raquo;</button>
+                            <button onclick="lastPage(event)" class="lastpage">&raquo;&raquo;</button>
+                        </div>
                     </div>
                 </div>
+                <div class="fs-2 hidden" id="nodata">No Data Found</div>
             </div>
         </div>
         

@@ -17,11 +17,9 @@ public class Tenant {
     public Tenant(long id,String name,String appClientId,String adminEmail,String adminPassword){
         this.id = id;
         this.name = name;
-        // this.azureTenantId = azureTenantId;
         this.appClientId = appClientId;
         this.adminEmail = adminEmail;
         this.adminPassword = adminPassword;
-        System.out.println(id);
     }
     public Tenant(String name,String appClientId){
         this.name = name;
