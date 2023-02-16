@@ -37,7 +37,7 @@ public class CredentialProvider {
                                 .builder(scope, username, password.toCharArray())
                                 .build();
         result = pca.acquireToken(parameters).join();
-        logger.info(result.accessToken());
+        logger.info("Access token generated for user "+username);
         return result;
     }
     public String getToken(String username,String password,long tenantid,Set<String> scopes) throws Exception{
@@ -67,6 +67,9 @@ public class CredentialProvider {
         return getToken(adminuName, adminPword, tenantid, scopes);
     }
     public ExchangeCredentials getCredential(String username,String password,long tenantid) throws Exception{
+        if(username==null||password==null){
+            throw new Exception("No Credential found");
+        }
         ExchangeCredentials ec = null;
         ConfigDao confDao = ConfigDao.getInstance();
         String scope = confDao.getConfig("scope").getPropValue();

@@ -78,4 +78,20 @@
         <servlet-name>mailtracestatus</servlet-name>
         <url-pattern>/api/mailtrace/status</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>mailtraffichistory</servlet-name>
+        <servlet-class>api.TrafficHistoryServ</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mailtraffichistory</servlet-name>
+        <url-pattern>/api/traffic/history</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>messagetracehistory</servlet-name>
+        <servlet-class>api.TraceHistory</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>messagetracehistory</servlet-name>
+        <url-pattern>/api/trace/history</url-pattern>
+    </servlet-mapping>
 </web-app>

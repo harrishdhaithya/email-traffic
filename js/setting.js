@@ -8,7 +8,9 @@ function updatePoolSize(event) {
         return;
     }
     const param = new URLSearchParams({poolsize})
-    $.get('/mailtraffic/api/updatepool?'+param.toString())
+    $.ajax('/mailtraffic/api/updatepool?'+param.toString(),{
+        method:'PUT'
+    })
     .then(resp=>{
         alert(resp.message);
     })

@@ -34,7 +34,7 @@
             <form onsubmit="updatePoolSize(event)">
                 <label for="poolsize" class="form-label">Thread Pool Size</label>
                 <input type="text" name="poolsize" id="poolsize" class="form-input" placeholder="Pool Size" value=<%=conf.getPropValue()%>>
-                <input type="submit" name="" id="" class="form-submit-btn">
+                <input type="submit" name="" id="" class="form-submit-btn" value="Update">
             </form>
         </div>
     </div>

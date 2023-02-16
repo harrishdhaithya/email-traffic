@@ -9,7 +9,9 @@ function deleteTen(event) {
     if(!result){
         return;
     }
-    $.get('/mailtraffic/api/deletetenant?id='+id)
+    $.ajax('/mailtraffic/api/tenant?id='+id,{
+        method:'DELETE'
+    })
     .then(resp=>{
         alert(resp.message);
         location.reload();

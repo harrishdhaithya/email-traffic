@@ -38,7 +38,7 @@
             <label for="password" class="form-label">Password</label>
             <input type="password" name="password" id="password" class="form-input" value=<%=cred.getPassword()%>>
             <input type="checkbox" onclick="showpassword()">Show Password
-            <input type="submit" class="form-submit-btn">
+            <input type="submit" class="form-submit-btn" value="Update">
         </form>
     </div>
 </body>

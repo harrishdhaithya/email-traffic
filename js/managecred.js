@@ -63,8 +63,10 @@ function updatePageinationBtn(){
     if(page==totalpages){
         document.getElementById('nextbtn').classList.add('hidden');
         document.getElementById('lastpage').classList.add('hidden');
-        document.getElementById('firstpage').classList.remove('hidden');
-        document.getElementById('prevbtn').classList.remove('hidden');
+        if(page!=1){
+            document.getElementById('firstpage').classList.remove('hidden');
+            document.getElementById('prevbtn').classList.remove('hidden');
+        }
     }
     if(page!=1&&page!=totalpages){
         document.getElementById('prevbtn').classList.remove('hidden');

@@ -32,6 +32,9 @@ public class MessageTrace {
     private long traceid;
     private long tenantid;
 
+    public MessageTrace(long tenantid){
+        this.tenantid = tenantid;
+    }
 
     private static String constructFilter(Timestamp startDate) throws Exception{
         StringBuilder sb = new StringBuilder();
@@ -115,13 +118,14 @@ public class MessageTrace {
         }catch(Exception ex){
             logger.warning(ex.getMessage());
             ex.printStackTrace();
-            mtdao.updateTraceStatus(traceid, false);
+            status="FAILED";
+            mtdao.updateTraceStatus(traceid, status);
             throw new Exception("Something went wrong...");
         }
         return true;
     }
 
-    public void updateTraceAsync(long tenantid){
+    public void updateTraceAsync(){
         Thread th = new Thread(()->{
             startTime = Timestamp.valueOf(LocalDateTime.now());
             try {
@@ -145,8 +149,9 @@ public class MessageTrace {
         while(cont){
             cont = this.update(tenantid, startdate,mids);
         }
-        mtdao.updateTraceStatus(traceid, true);
         status = "COMPLETED";
+        mtdao.updateTraceStatus(traceid, status);
+        logger.info(getStatus().toString());
     }
 
     public JSONObject getStatus(){

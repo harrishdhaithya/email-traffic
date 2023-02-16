@@ -25,9 +25,7 @@ public class SeqCredUtil implements ICredUtil {
     public Credential getRandomCredPair(){
         Random rand = new Random();
         int randInt = this.seqStart+rand.nextInt(this.seqEnd)+1;
-        System.out.println(this.tenant.getName());
         String email = this.prefix+randInt+((suffix!=null)?suffix:"")+"@"+this.tenant.getName();
-        System.out.println(email);
         Credential cred = new Credential(email,this.password);
         return cred;
     }

@@ -5,10 +5,15 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.adventnet.db.api.RelationalAPI;
 import com.adventnet.ds.query.Column;
 import com.adventnet.ds.query.Criteria;
@@ -28,6 +33,7 @@ import com.adventnet.persistence.DataObject;
 import com.adventnet.persistence.Row;
 import com.adventnet.persistence.WritableDataObject;
 import model.MailTrace;
+import model.TraceStatus;
 
 public class MailTraceDao {
     private static Logger logger = Logger.getLogger(MailTraceDao.class.getName());
@@ -42,8 +48,9 @@ public class MailTraceDao {
         DataObject dobj = new WritableDataObject();
         Row row = new Row("Traces");
         row.set("TENANT_ID", tenantid);
-        row.set("TIMESTAMP", Timestamp.valueOf(LocalDateTime.parse(timestamp)));
-        row.set("SUCCESS", "true");
+        row.set("TIMESTAMP", Timestamp.valueOf(LocalDateTime.now(ZoneId.of("UTC"))));
+        row.set("RECENT_TRACE", Timestamp.valueOf(LocalDateTime.parse(timestamp)));
+        row.set("STATUS", "RUNNING");
         long traceid = -1;
         try {
             dobj.addRow(row);
@@ -56,12 +63,12 @@ public class MailTraceDao {
         return traceid;
     }
 
-    public boolean updateTraceStatus(long traceid,boolean status){
+    public boolean updateTraceStatus(long traceid,String status){
         Criteria cri = new Criteria(new Column("Traces", "ID"), traceid, QueryConstants.EQUAL);
         try {
             UpdateQuery uq = new UpdateQueryImpl("Traces");
             uq.setCriteria(cri);
-            uq.setUpdateColumn("SUCCESS", Boolean.toString(status));
+            uq.setUpdateColumn("STATUS", status);
             DataAccess.update(uq);
             return true;
         } catch (DataAccessException e) {
@@ -77,8 +84,7 @@ public class MailTraceDao {
                 LocalDateTime.now(ZoneId.of("UTC")).minusHours(10)
             );
         }
-        logger.info("Timestamp: "+startdate.toString());
-        Criteria c = new Criteria(new Column("Traced_Mail", "TIMESTAMP"), startdate, QueryConstants.GREATER_EQUAL);
+        Criteria c = new Criteria(new Column("Traced_Mail", "RECENT_TRACE"), startdate, QueryConstants.GREATER_EQUAL);
         SelectQuery sq = new SelectQueryImpl(new Table("Traced_Mail"));
         sq.addSelectColumn(new Column("Traced_Mail", "MESSAGE_ID"));
         sq.setCriteria(c);
@@ -86,16 +92,15 @@ public class MailTraceDao {
             RelationalAPI relApi = RelationalAPI.getInstance();
             Connection conn = relApi.getConnection();
             DataSet ds = relApi.executeQuery(sq, conn);
-            System.out.println(ds);
             while(ds.next()){
                 String mid = ds.getAsString("MESSAGE_ID");
                 mids.add(mid);
             }
+            conn.close();
         } catch (Exception e) {
             logger.warning("Not able to get messageIDS...");
             e.printStackTrace();
         }
-        logger.info("Message IDs: "+mids.toString());
         return mids;
     }
 
@@ -142,7 +147,7 @@ public class MailTraceDao {
 
     public Timestamp getRecentTrace(long tenantid){
         Criteria c = new Criteria(new Column("Traces","TENANT_ID"), tenantid, QueryConstants.EQUAL);
-        Criteria c1 = new Criteria(new Column("Traces", "SUCCESS"), "true", QueryConstants.EQUAL);
+        Criteria c1 = new Criteria(new Column("Traces", "STATUS"), "SUCCESS", QueryConstants.EQUAL);
         SelectQuery sq = new SelectQueryImpl(new Table("Traces"));
         sq.addSelectColumn(new Column("Traces", "TIMESTAMP"));
         sq.setCriteria(c.and(c1));
@@ -156,11 +161,10 @@ public class MailTraceDao {
             conn = relAPi.getConnection();
             ds = relAPi.executeQuery(sq, conn);
             if(ds.next()){
-                Timestamp timestamp = ds.getAsTimestamp("TIMESTAMP");
-                logger.info("Timestamp: "+timestamp);
+                Timestamp starttime = ds.getAsTimestamp("TRACE_END_TIME");
                 conn.close();
                 ds.close();
-                return timestamp;
+                return starttime;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -247,5 +251,50 @@ public class MailTraceDao {
             e.printStackTrace();
         }
         return 0;
+    }
+    public JSONArray getTraceStatusByTenant(long tenantid){
+        JSONArray traces = new JSONArray();
+        Criteria c = new Criteria(new Column("Traces", "TENANT_ID"), tenantid, QueryConstants.EQUAL);
+        TenantDao tdao = TenantDao.getInstance();
+        try {
+            DataObject dobj = DataAccess.get("Traces", c);
+            Iterator itr = dobj.getRows("Traces");
+            while (itr.hasNext()) {
+                JSONObject jobj = new JSONObject();
+                Row row = (Row)itr.next();
+                jobj.put("id", row.getLong("ID"));
+                jobj.put("tracestart", row.getTimestamp("TIMESTAMP").toString());
+                jobj.put("recentTrace", row.getTimestamp("RECENT_TRACE").toString());
+                jobj.put("tenantid", tdao.getTenant(row.getLong("TENANT_ID")).getName());
+                jobj.put("status", row.getString("STATUS"));
+                traces.put(jobj);
+            } 
+        } catch (DataAccessException e) {
+            logger.warning("Not able to Get Trace History...");
+            e.printStackTrace();
+        }
+        return traces;
+    }
+    public JSONArray getAllTraces(){
+        JSONArray traces = new JSONArray();
+        try{
+            DataObject dobj = DataAccess.get("Traces", (Criteria)null);
+            Iterator itr = dobj.getRows("Traces");
+            TenantDao tdao = TenantDao.getInstance();
+            while (itr.hasNext()) {
+                JSONObject jobj = new JSONObject();
+                Row row = (Row)itr.next();
+                jobj.put("id", row.getLong("ID"));
+                jobj.put("tracestart", row.getTimestamp("TIMESTAMP").toString());
+                jobj.put("recentTrace", row.getTimestamp("RECENT_TRACE")).toString();
+                jobj.put("tenant", tdao.getTenant(row.getLong("TENANT_ID")).getName());
+                jobj.put("status", row.getString("STATUS"));
+                traces.put(jobj);
+            } 
+        }catch(DataAccessException e){
+            logger.warning("Not able to Get Trace History...");
+            e.printStackTrace();
+        }
+        return traces;
     }
 }

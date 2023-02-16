@@ -19,6 +19,7 @@ public class MailTrafficTask implements Task {
         MailTrafficGenerator mtg = new MailTrafficGenerator(ts.getTenantid(), (int)ts.getCount());
         try {
             mtg.generateTraffic();
+            logger.info("Generated Email Traffic...");
         } catch (Exception e) {
             e.printStackTrace();
             throw new TaskExecutionException(e);

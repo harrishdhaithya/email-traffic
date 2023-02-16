@@ -12,7 +12,13 @@ function createTenant(event) {
         return;
     }
     const param = new URLSearchParams({tenant,app_clientid,admin_email,admin_password});
-    $.get('/mailtraffic/api/tenant?'+param.toString())
+    $.ajax('/mailtraffic/api/tenant',{
+        method:'POST',
+        ContentType: 'application/x-www-form-urlencoded',
+        data: param.toString(),
+        processData: false,
+        cache: false
+    })
     .then(resp=>{
         alert(resp.message);
         location.reload();

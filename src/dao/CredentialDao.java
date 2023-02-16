@@ -196,8 +196,9 @@ public class CredentialDao {
                 long tenantId = ds.getAsLong("TENANT_ID");
                 String status = ds.getAsString("STATUS");
                 c = new Credential(id,email, password, tenantId,status);
-                conn.close();
             }
+            conn.close();
+            ds.close();
         } catch (SQLException e) {
             logger.warning(e.getMessage());
             e.printStackTrace();
@@ -209,14 +210,16 @@ public class CredentialDao {
         RelationalAPI relApi = RelationalAPI.getInstance();
         Connection conn = null;
         DataSet ds = null;
+        String email = null;
         try {
             conn = relApi.getConnection();
             ds=relApi.executeQuery(conn, "select EMAIL from credentials c where tenant_id="+tenant_id+" and STATUS='ACTIVE' order by random() limit 1 ");
             if(ds.next()){
-                String email = ds.getAsString("EMAIL");
-                conn.close();
-                return email;
+                email = ds.getAsString("EMAIL");
             }
+            conn.close();
+            ds.close();
+            return email;
         } catch (SQLException e) {
             logger.warning(e.getMessage());
             e.printStackTrace();
@@ -237,6 +240,8 @@ public class CredentialDao {
                 String email = ds.getAsString("EMAIL");
                 emails[i++] = email;
             }
+            ds.close();
+            conn.close();
             if(i==0){
                 return null;
             }

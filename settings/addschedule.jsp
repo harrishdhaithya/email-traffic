@@ -44,7 +44,7 @@
                 </select>
                 <label for="count">Enter Number of Mails:</label>
                 <input type="number" name="count" id="count" class="form-input" onchange="observeCount()">
-                <input type="submit" class="form-submit-btn">
+                <input type="submit" class="form-submit-btn" value="Schedule">
             </form>
         </div>
     </div>

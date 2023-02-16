@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import com.github.javafaker.Faker;
 import auth.CredentialProvider;
 import dao.ConfigDao;
+import dao.TrafficHistoryDao;
 import microsoft.exchange.webservices.data.core.ExchangeService;
 import microsoft.exchange.webservices.data.core.service.item.EmailMessage;
 import microsoft.exchange.webservices.data.credential.ExchangeCredentials;
@@ -23,6 +24,7 @@ import microsoft.exchange.webservices.data.property.complex.MessageBody;
 import model.Config;
 import model.Credential;
 import model.Mail;
+import model.TrafficHistory;
 import utils.CSVCredUtil;
 import utils.DBCredUtil;
 import utils.ICredUtil;
@@ -151,8 +153,6 @@ public class MailTrafficGenerator {
                         this.count--;
                     }
                     Credential cred=credUtil.getRandomCredPair();
-                    System.out.println(cred.getEmail());
-                    System.out.println(cred.getPassword());
                     CredentialProvider provider = CredentialProvider.getInstance();
                     ExchangeCredentials exc;
                     try {
@@ -169,7 +169,6 @@ public class MailTrafficGenerator {
                     Set<String> toList = new HashSet<>();
                     Random rand = new Random();
                     int toCount = rand.nextInt(10)+1;
-                    logger.info("Getting Recievers");
                     for(int j=0;j<toCount;j++){
                         String reciever = credUtil.getRandomReciever();
                         toList.add(reciever);
@@ -180,10 +179,8 @@ public class MailTrafficGenerator {
                     String body = faker.lorem().paragraph();
                     String fromEmail = cred.getEmail();
                     Mail mail = new Mail(fromEmail, toList, subject, body);
-                    logger.info("Mail: "+mail);
                     boolean success = sendEmail(eserv,exc, mail);
-                    System.out.println("Mail Sent...");
-                    mail.setStatus(success);
+                    logger.info("Mail Sent form "+fromEmail+"to "+toList.toString());
                     if(success){
                         incSuccessCount();
                     }else{
@@ -210,11 +207,14 @@ public class MailTrafficGenerator {
                 }
             }
             this.es.shutdown();
-            logger.info("Completed...");
+            logger.info("Completed generating traffic...");
             logger.info(getStatus());
             endTime = System.currentTimeMillis();
             endTimestamp = Timestamp.valueOf(LocalDateTime.now());
             completed=true;
+            TrafficHistory th = new TrafficHistory(tenant_id, successCount, failureCount, mailCount, startTimeStamp, endTimestamp);
+            TrafficHistoryDao thdao = TrafficHistoryDao.getInstance();
+            thdao.addTrafficHistory(th);
             Thread.currentThread().interrupt();
         };
         Thread t = new Thread(r);

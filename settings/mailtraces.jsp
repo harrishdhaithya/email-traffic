@@ -19,11 +19,12 @@
         <img alt="logo Image" src="../img/logo.png" style="height: 5rem;margin-left: 5px;">
         <div class="nav-title">EMail Traffic Generator</div>
         <div class="flex-right">
+            <button class="nav-btn" onclick="location.href='tracehistory.jsp'">Trace History</button>
             <button class="nav-btn" onclick="location.href='/mailtraffic'">Home</button>
             <button class="nav-btn" onclick="location.href='../settings'">Back</button>
             <button class="nav-btn" onclick="location.href='collecttrace.jsp'">Start Trace</button>
             <%if(mt!=null){%>
-                <button class="nav-btn" onclick="location.href='mailtracestatus.jsp'">View Trace Status</button>
+                <button class="nav-btn" onclick="location.href='mailtracestatus.jsp'">Current Trace Status</button>
             <%}%>
         </div>
     </div>
@@ -32,7 +33,7 @@
         List<Tenant> tenants = tdao.getAllTenants();
     %>
     <div class="form-box">
-        <div class="container-wide">
+        <div class="container-wide" style="width: 980px;">
             <div class="header-box">
                 Mail Traces
             </div>
@@ -51,7 +52,7 @@
                     <option value="100">100</option>
                     <option value="150">150</option>
                 </select>
-                <input type="submit" name="submitd=" class="form-submit-btn">
+                <input type="submit" name="submit" class="form-submit-btn" value="Get Traces">
             </form>
             <div class="table-container hidden" id="table-container">
                 <table style="table-layout: fixed; width: 100%;overflow-wrap: break-word;">

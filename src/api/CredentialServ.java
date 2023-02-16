@@ -97,7 +97,7 @@ public class CredentialServ extends HttpServlet {
             long totaldata = cdao.getCredCount(tenant);
             result.put("rangestart", lower);
             List<Credential> cred = cdao.getCredentials(tenant, lower, countNum);
-            result.put("rangeend", lower+cred.size());
+            result.put("rangeend", lower+cred.size()-1);
             result.put("totalcount", totaldata);
             JSONArray jarr = new JSONArray();
             for(Credential credential:cred){

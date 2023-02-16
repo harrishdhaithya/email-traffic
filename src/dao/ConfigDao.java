@@ -2,7 +2,6 @@ package dao;
 
 import java.util.Iterator;
 import java.util.logging.Logger;
-
 import com.adventnet.ds.query.Column;
 import com.adventnet.ds.query.Criteria;
 import com.adventnet.ds.query.QueryConstants;
@@ -71,5 +70,4 @@ public class ConfigDao {
         }
         return conf;
     }
-
 }

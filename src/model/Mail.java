@@ -7,7 +7,6 @@ public class Mail {
     private Set<String> toList;
     private String subject;
     private String content;
-    private boolean status;
     public Mail(String from, Set<String> toList, String subject, String content) {
         this.from = from;
         this.toList = toList;
@@ -37,11 +36,5 @@ public class Mail {
     }
     public void setContent(String content) {
         this.content = content;
-    }
-    public void setStatus(boolean status){
-        this.status=status;
-    }
-    public boolean getStatus(){
-        return this.status;
     }
 }

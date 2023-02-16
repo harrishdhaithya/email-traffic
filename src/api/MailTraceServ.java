@@ -22,8 +22,8 @@ public class MailTraceServ extends HttpServlet {
             out = resp.getWriter();
             String tenant = req.getParameter("tenant");
             long tenantid = Long.parseLong(tenant);
-            MessageTrace mt = new MessageTrace();
-            mt.updateTraceAsync(tenantid);
+            MessageTrace mt = new MessageTrace(tenantid);
+            mt.updateTraceAsync();
             HttpSession session = req.getSession();
             session.setAttribute("mailtrace", mt);
             resp.setStatus(200);
@@ -60,7 +60,7 @@ public class MailTraceServ extends HttpServlet {
             JSONObject resObj = new JSONObject();
             resObj.put("totalcount", totalcount);
             resObj.put("rangestart", lower);
-            resObj.put("rangeend", lower+countNum);
+            resObj.put("rangeend", lower+mailtraces.size()-1);
             JSONArray data = new JSONArray();
             for(MailTrace mt:mailtraces){
                 JSONObject jobj = new JSONObject();

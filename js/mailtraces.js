@@ -85,7 +85,7 @@ function loadTable(){
     .then(resp=>{
         totalpages = Math.ceil(Number(resp.totalcount)/count);
         renderTable(resp.data);
-        page=Math.ceil(resp.rangestart/100);
+        page=Math.ceil(resp.rangestart/count);
         updatePageinationBtn();
         document.getElementById('pageinfo').textContent = "Range: "+resp.rangestart+" to "+resp.rangeend;
         document.getElementById('total-data').textContent ="Total Count: "+ resp.totalcount;

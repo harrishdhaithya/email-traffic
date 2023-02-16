@@ -84,9 +84,6 @@ public class ScheduleDao {
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
             calRowConf.setStartDate(cal.get(Calendar.DAY_OF_MONTH),cal.get(Calendar.MONTH),cal.get(Calendar.YEAR));
-            // System.out.println(calRowConf.getStartDate().toString());
-            // calRowConf.setEndDate(endDate);
-            // System.out.println(calRowConf.getEndDate().toString());
             Row calendarRow = calRowConf.toCalendarRow();
             calendarRow.set(CALENDAR.SCHEDULE_ID_IDX, scheduleRow.get(SCHEDULE.SCHEDULE_ID_IDX));
             Row trafficSchedule = new Row("Traffic_Schedule");
@@ -140,6 +137,8 @@ public class ScheduleDao {
                 Schedule schedule = new Schedule(id, scheduleName, tenantid, scheduleTime, adminStatus,count);
                 schedules.add(schedule);
             }
+            conn.close();
+            ds.close();
         } catch (QueryConstructionException e) {
             logger.warning(e.getMessage());
             e.printStackTrace();

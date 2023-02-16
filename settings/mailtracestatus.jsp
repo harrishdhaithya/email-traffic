@@ -16,8 +16,8 @@
         <div class="nav-title">EMail Traffic Generator</div>
         <div class="flex-right">
             <button class="nav-btn" onclick="location.href='/mailtraffic'" >Home</button>
-            <button class="nav-btn" onclick="location.href='settings'" >Settings</button>
-            <button class="nav-btn" onclick="location.href='mailtraces.jsp'" >Back</button>
+            <button class="nav-btn" onclick="location.href='/mailtraffic/settings'">Settings</button>
+            <button class="nav-btn" onclick="location.href='collecttrace.jsp'" >Back</button>
         </div>
     </div>
     <div class="container">

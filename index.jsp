@@ -23,6 +23,7 @@
         <img src="img/logo.png" style="height: 5rem;margin-left: 5px;">
         <div class="nav-title">EMail Traffic Generator</div>
         <div class="flex-right">
+            <button class="nav-btn" onclick="location.href='settings/traffichistory.jsp'" >History</button>
             <button class="nav-btn" onclick="location.href='settings'" >Settings</button>
             <%if(mtg!=null){%>
                 <button class="nav-btn" onclick="location.href='mailstatus.html'" >View Status</button>
