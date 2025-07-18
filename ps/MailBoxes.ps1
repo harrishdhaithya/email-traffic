@@ -18,7 +18,7 @@ Connect-ExchangeOnline -Credential $cred
 
 if($operation -eq 'create'){
     foreach($email in $emails) {
-        $pass = "m365Password@123"
+        $pass = "{{PASSWORD}}"
         $mpass = ConvertTo-SecureString $pass -AsPlainText -Force
         New-Mailbox -Shared -Name $email -DisplayName $email -Alias $email -Password $mpass
     }
